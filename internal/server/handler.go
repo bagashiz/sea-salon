@@ -17,6 +17,7 @@ func staticFiles() http.Handler {
 // The index function is the handler for the index page.
 func index() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_ = templates.Index().Render(r.Context(), w)
+		landingPage := templates.LandingPage()
+		_ = templates.Index(landingPage).Render(r.Context(), w)
 	})
 }
