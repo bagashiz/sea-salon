@@ -39,15 +39,15 @@ tasks:
 
   migrate:create:
     desc: "Create new database migration"
-    cmd: goose -dir pkg/postgres/migrations create {{.CLI_ARGS}} sql
+    cmd: goose -dir internal/postgres/migrations create {{.CLI_ARGS}} sql
 
   migrate:up:
     desc: "Run database migrations"
-    cmd: goose -dir pkg/postgres/migrations postgres $DSN up
+    cmd: goose -dir internal/postgres/migrations postgres $DSN up
 
   migrate:down:
     desc: "Rollback to previous database migration"
-    cmd: goose -dir pkg/postgres/migrations postgres $DSN down
+    cmd: goose -dir internal/postgres/migrations postgres $DSN down
 
   sqlc:
     desc: "Generate SQLC code"
