@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bagashiz/sea-salon/internal/db"
 	"github.com/bagashiz/sea-salon/internal/server"
 	"github.com/bagashiz/sea-salon/pkg/config"
 	"github.com/bagashiz/sea-salon/pkg/logger"
+	db "github.com/bagashiz/sea-salon/pkg/postgres"
 )
 
 // entry point of the application.
@@ -39,14 +39,14 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	db, err := db.NewPostgres(context.Background(), config.DB)
+	store, err := db.NewStore(ctx, config.DB)
 	if err != nil {
 		return err
 	}
 
 	slog.Info("connected to database", "type", config.DB.Type)
 
-	if err := db.Migrate(); err != nil {
+	if err := store.Migrate(); err != nil {
 		return err
 	}
 
