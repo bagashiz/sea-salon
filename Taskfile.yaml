@@ -5,6 +5,9 @@ version: "3"
 dotenv:
   - ".env"
 
+env:
+  DSN: "{{.DB_TYPE}}://{{.DB_USER}}:{{.DB_PASSWORD}}@{{.DB_HOST}}:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable"
+
 tasks:
   default:
     desc: "Gettings started"
@@ -19,6 +22,8 @@ tasks:
       - go mod download
       - go install github.com/air-verse/air@latest
       - go install github.com/a-h/templ/cmd/templ@latest
+      - go install github.com/pressly/goose/v3/cmd/goose@latest
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
   service:up:
     desc: "Start services"
@@ -30,7 +35,23 @@ tasks:
 
   db:cli:
     desc: "Connect to database using command line interface"
-    cmd: docker exec -it sea-salon_postgres psql -U postgres
+    cmd: docker exec -it sea-salon_postgres psql -U postgres -d {{.DB_NAME}}
+
+  migrate:create:
+    desc: "Create new database migration"
+    cmd: goose -dir pkg/postgres/migrations create {{.CLI_ARGS}} sql
+
+  migrate:up:
+    desc: "Run database migrations"
+    cmd: goose -dir pkg/postgres/migrations postgres $DSN up
+
+  migrate:down:
+    desc: "Rollback to previous database migration"
+    cmd: goose -dir pkg/postgres/migrations postgres $DSN down
+
+  sqlc:
+    desc: "Generate SQLC code"
+    cmd: sqlc generate
 
   dev:
     desc: "Start development server"
