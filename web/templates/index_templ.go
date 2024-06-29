@@ -26,7 +26,7 @@ func Index(content templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script src=\"https://unpkg.com/hyperscript.org@0.9.12\"></script></head><body class=\"flex flex-col min-h-[100dvh]\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script src=\"/assets/scripts/hyperscript.0-9-12.min.js\" defer></script></head><body class=\"flex flex-col min-h-[100dvh]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
