@@ -9,16 +9,19 @@ import (
 	"sync"
 	"time"
 
+	"github.com/bagashiz/sea-salon/internal/config"
+	db "github.com/bagashiz/sea-salon/internal/postgres"
 	"github.com/bagashiz/sea-salon/internal/server"
-	"github.com/bagashiz/sea-salon/pkg/config"
-	"github.com/bagashiz/sea-salon/pkg/logger"
-	db "github.com/bagashiz/sea-salon/pkg/postgres"
 )
 
 // entry point of the application.
 func main() {
 	ctx := context.Background()
-	logger.Set()
+
+	logger := slog.New(
+		slog.NewJSONHandler(os.Stdout, nil),
+	)
+	slog.SetDefault(logger)
 
 	if err := run(ctx, os.Getenv); err != nil {
 		slog.Error("error running application", "error", err)
@@ -46,7 +49,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 
 	slog.Info("connected to database", "type", config.DB.Type)
 
-	if err := store.Migrate(); err != nil {
+	if err := store.Migrate(config.DB.Type); err != nil {
 		return err
 	}
 

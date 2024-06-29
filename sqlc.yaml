@@ -1,12 +1,12 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "pkg/postgres/queries"
-    schema: "pkg/postgres/migrations"
+    queries: "internal/postgres/queries"
+    schema: "internal/postgres/migrations"
     gen:
       go:
         package: "postgres"
-        out: "pkg/postgres"
+        out: "internal/postgres"
         sql_package: "pgx/v5"
         emit_interface: true
         emit_empty_slices: true

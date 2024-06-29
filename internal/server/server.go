@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/bagashiz/sea-salon/pkg/config"
+	"github.com/bagashiz/sea-salon/internal/config"
 )
 
 // The NewServer function creates a new http.Server type, configures the routes, and adds middleware.
