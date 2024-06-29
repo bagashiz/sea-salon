@@ -3,17 +3,19 @@ package server
 import (
 	"net"
 	"net/http"
+
+	"github.com/bagashiz/sea-salon/pkg/config"
 )
 
 // The NewServer function creates a new http.Server type, configures the routes, and adds middleware.
-func NewServer(config map[string]string) *http.Server {
+func NewServer(cfg *config.App) *http.Server {
 	mux := http.NewServeMux()
 	addRoutes(mux)
 
 	var handler http.Handler = mux
 	handler = logger(handler)
 
-	addr := net.JoinHostPort(config["APP_HOST"], config["APP_PORT"])
+	addr := net.JoinHostPort(cfg.Host, cfg.Port)
 
 	server := &http.Server{
 		Addr:    addr,

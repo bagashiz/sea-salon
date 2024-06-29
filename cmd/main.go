@@ -2,30 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
 
+	"github.com/bagashiz/sea-salon/internal/db"
 	"github.com/bagashiz/sea-salon/internal/server"
-	"github.com/joho/godotenv"
+	"github.com/bagashiz/sea-salon/pkg/config"
+	"github.com/bagashiz/sea-salon/pkg/logger"
 )
-
-// init loads the environment variables from the .env file for local development.
-func init() {
-	if os.Getenv("APP_ENV") != "production" {
-		_ = godotenv.Load()
-	}
-}
 
 // entry point of the application.
 func main() {
 	ctx := context.Background()
+	logger.Set()
 
 	if err := run(ctx, os.Getenv); err != nil {
-		fmt.Printf("error: %v", err)
+		slog.Error("error running application", "error", err)
 		os.Exit(1)
 	}
 }
@@ -38,23 +34,31 @@ func run(ctx context.Context, getEnv func(string) string) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	config := map[string]string{
-		"APP_HOST":          getEnv("APP_HOST"),
-		"APP_PORT":          getEnv("APP_PORT"),
-		"POSTGRES_USER":     getEnv("POSTGRES_USER"),
-		"POSTGRES_PASSWORD": getEnv("POSTGRES_PASSWORD"),
-		"POSTGRES_DB":       getEnv("POSTGRES_DB"),
+	config, err := config.New(getEnv)
+	if err != nil {
+		return err
 	}
 
-	httpServer := server.NewServer(config)
+	db, err := db.NewPostgres(context.Background(), config.DB)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("connected to database", "type", config.DB.Type)
+
+	if err := db.Migrate(); err != nil {
+		return err
+	}
+
+	httpServer := server.NewServer(config.App)
 
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("error listening and serving: %s\n", err)
+			slog.Error("error listening and serving", "error", err)
 		}
 	}()
 
-	fmt.Printf("listening on %s\n", httpServer.Addr)
+	slog.Info("started the HTTP server", "host", config.App.Host, "port", config.App.Port)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -66,11 +70,11 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		defer cancel()
 
 		if err := httpServer.Shutdown(shutdownCtx); err != nil {
-			fmt.Printf("error shutting down server: %s\n", err)
+			slog.Error("error shutting down server", "error", err)
 			return
 		}
 
-		fmt.Println("server shut down gracefully")
+		slog.Info("server shut down gracefully")
 	}()
 
 	wg.Wait()
