@@ -53,6 +53,14 @@ tasks:
     desc: "Generate SQLC code"
     cmd: sqlc generate
 
+  tw:
+    desc: "Generate Tailwind CSS"
+    cmd: npx tailwindcss -i ./tailwind.css -o ./web/assets/styles/globals.css
+
+  templ:
+    desc: "Generate code templates from templ files"
+    cmd: templ generate
+
   dev:
     desc: "Start development server"
     cmd: air
