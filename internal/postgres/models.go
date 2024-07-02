@@ -8,6 +8,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -54,7 +55,7 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 }
 
 type User struct {
-	ID        pgtype.UUID
+	ID        uuid.UUID
 	Role      UserRole
 	Email     string
 	Password  string
