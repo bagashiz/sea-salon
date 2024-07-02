@@ -6,14 +6,14 @@ import (
 	"time"
 )
 
-// ResponseWriter is a wrapper around http.ResponseWriter that stores the status code.
-type ResponseWriter struct {
+// responseWriter is a wrapper around http.ResponseWriter that stores the status code.
+type responseWriter struct {
 	http.ResponseWriter
 	statusCode int
 }
 
 // WriteHeader overrides the WriteHeader method to store the status code.
-func (w *ResponseWriter) WriteHeader(statusCode int) {
+func (w *responseWriter) WriteHeader(statusCode int) {
 	w.statusCode = statusCode
 	w.ResponseWriter.WriteHeader(statusCode)
 }
@@ -23,7 +23,7 @@ func logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
-		writer := &ResponseWriter{
+		writer := &responseWriter{
 			ResponseWriter: w,
 			statusCode:     http.StatusOK,
 		}
