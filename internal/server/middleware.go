@@ -6,11 +6,30 @@ import (
 	"time"
 )
 
+// responseWriter is a wrapper around http.ResponseWriter that stores the status code.
+type responseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+// WriteHeader overrides the WriteHeader method to store the status code.
+func (w *responseWriter) WriteHeader(statusCode int) {
+	w.statusCode = statusCode
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
 // The logger middleware logs the request method and URL.
 func logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		next.ServeHTTP(w, r)
-		slog.Info("request", slog.String("method", r.Method), slog.String("url", r.URL.Path), slog.Duration("duration", time.Since(start)))
+
+		writer := &responseWriter{
+			ResponseWriter: w,
+			statusCode:     http.StatusOK,
+		}
+
+		next.ServeHTTP(writer, r)
+
+		slog.Info("request", slog.Int("status", writer.statusCode), slog.String("method", r.Method), slog.String("url", r.URL.Path), slog.Duration("duration", time.Since(start)))
 	})
 }

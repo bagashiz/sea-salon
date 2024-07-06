@@ -6,9 +6,22 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()   
+);
+INSERT INTO users (
+    role,
+    email,
+    password,
+    full_name,
+    phone_number
+) VALUES (
+    'admin',
+    'thomas.n@compfest.id',
+    '$2a$10$4tS9MQtS6l/9PWY.MiR8O.3.yFKHvaB34kpQVGgSVnGrla6ztOaam',
+    'Thomas N',
+    '08123456789'
 );
 
 -- +goose Down

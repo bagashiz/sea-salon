@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./web/templates/**/*.templ",
+    "./internal/web/template/**/*.templ",
   ],
   theme: {
     extend: {

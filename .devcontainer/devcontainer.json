@@ -55,7 +55,17 @@
 					"editor.codeActionsOnSave": {
 						"source.organizeImports": "explicit"
 					}
-				}
+				},
+				"files.associations": {
+					"*.css": "tailwindscss"
+				},
+				"editor.quickSuggestions": {
+					"strings": "on"
+				},
+				"tailwindCSS.includeLanguages": {
+					"templ": "html"
+				},
+				"tailwindCSS.emmetCompletions": true
 			}
 		}
 	}
