@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()   
 );
@@ -15,7 +15,7 @@ INSERT INTO users (
     email,
     password,
     full_name,
-    phone
+    phone_number
 ) VALUES (
     'admin',
     'thomas.n@compfest.id',

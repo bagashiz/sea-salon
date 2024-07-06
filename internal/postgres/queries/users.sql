@@ -1,25 +1,28 @@
--- name: InsertUser :one
+-- name: InsertUser :exec
 INSERT INTO users (
+    id,
     email,
     password,
     full_name,
-    phone,
-    role
+    phone_number,
+    role,
+    created_at,
+    updated_at
 )
-VALUES ($1, $2, $3, $4, $5)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
--- name: GetUserById :one
+-- name: SelectUserByID :one
 SELECT * FROM users
 WHERE id = $1
 LIMIT 1;
 
--- name: GetUserByEmail :one
+-- name: SelectUserByEmail :one
 SELECT * FROM users
 WHERE email = $1
 LIMIT 1;
 
--- name: GetAllUsers :many
+-- name: SelectAllUsers :many
 SELECT * FROM users
 ORDER BY id
 LIMIT $1
@@ -31,7 +34,7 @@ SET
     email = COALESCE(sqlc.narg(email), email),
     password = COALESCE(sqlc.narg(password), password),
     full_name = COALESCE(sqlc.narg(full_name), full_name),
-    phone = COALESCE(sqlc.narg(phone), phone),
+    phone_number = COALESCE(sqlc.narg(phone_number), phone_number),
     role = COALESCE(sqlc.narg(role), role),
     updated_at = now()
 WHERE id = $1

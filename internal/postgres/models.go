@@ -55,12 +55,12 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 }
 
 type User struct {
-	ID        uuid.UUID
-	Role      UserRole
-	Email     string
-	Password  string
-	FullName  string
-	Phone     string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
+	ID          uuid.UUID
+	Role        UserRole
+	Email       string
+	Password    string
+	FullName    string
+	PhoneNumber string
+	CreatedAt   pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
 }

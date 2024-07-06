@@ -12,10 +12,10 @@ import (
 
 type Querier interface {
 	DeleteUser(ctx context.Context, id uuid.UUID) error
-	GetAllUsers(ctx context.Context, arg GetAllUsersParams) ([]User, error)
-	GetUserByEmail(ctx context.Context, email string) (User, error)
-	GetUserById(ctx context.Context, id uuid.UUID) (User, error)
-	InsertUser(ctx context.Context, arg InsertUserParams) (User, error)
+	InsertUser(ctx context.Context, arg InsertUserParams) error
+	SelectAllUsers(ctx context.Context, arg SelectAllUsersParams) ([]User, error)
+	SelectUserByEmail(ctx context.Context, email string) (User, error)
+	SelectUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

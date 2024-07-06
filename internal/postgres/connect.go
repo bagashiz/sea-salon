@@ -10,20 +10,14 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-// Storer extends the Querier interface with a Migrate method.
-type Storer interface {
+// DB wraps the Querier interface and a pgxpool.Pool instance.
+type DB struct {
 	Querier
-	Migrate(dialect string) error
+	*pgxpool.Pool
 }
 
-// Store wraps the auto-generated Queries struct with a pgxpool.Pool.
-type Store struct {
-	*Queries
-	pool *pgxpool.Pool
-}
-
-// NewStore creates a new DB instance using the provided config.
-func NewStore(ctx context.Context, cfg *config.DB) (Storer, error) {
+// NewDB creates a new DB instance using the provided config.
+func NewDB(ctx context.Context, cfg *config.DB) (*DB, error) {
 	dsn := fmt.Sprintf(
 		"%s://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.Type, cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name,
@@ -38,21 +32,18 @@ func NewStore(ctx context.Context, cfg *config.DB) (Storer, error) {
 		return nil, err
 	}
 
-	return &Store{
-		Queries: New(pool),
-		pool:    pool,
-	}, nil
+	return &DB{Querier: New(pool), Pool: pool}, nil
 }
 
 // Migrate runs the goose migration tool to apply new migrations.
-func (s *Store) Migrate(dialect string) error {
+func (d *DB) Migrate(dialect string) error {
 	goose.SetBaseFS(migrationFS)
 
 	if err := goose.SetDialect(dialect); err != nil {
 		return err
 	}
 
-	db := stdlib.OpenDBFromPool(s.pool)
+	db := stdlib.OpenDBFromPool(d.Pool)
 	defer db.Close()
 
 	if err := goose.Up(db, "migrations"); err != nil {
@@ -60,4 +51,22 @@ func (s *Store) Migrate(dialect string) error {
 	}
 
 	return nil
+}
+
+// ExecTX wraps the provided function in a transaction and executes it.
+func (d *DB) ExecTX(ctx context.Context, fn func(Querier) error) error {
+	tx, err := d.Pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	if err := fn(New(tx)); err != nil {
+		if rbErr := tx.Rollback(ctx); rbErr != nil {
+			return rbErr
+		}
+
+		return err
+	}
+
+	return tx.Commit(ctx)
 }

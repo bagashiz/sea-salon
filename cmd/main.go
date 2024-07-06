@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/bagashiz/sea-salon/internal/config"
-	db "github.com/bagashiz/sea-salon/internal/postgres"
+	"github.com/bagashiz/sea-salon/internal/postgres"
 	"github.com/bagashiz/sea-salon/internal/server"
 )
 
@@ -37,19 +37,19 @@ func run(ctx context.Context, getEnv func(string) string) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	config, err := config.New(getEnv)
+	config, err := config.New(getEnv, "")
 	if err != nil {
 		return err
 	}
 
-	store, err := db.NewStore(ctx, config.DB)
+	db, err := postgres.NewDB(ctx, config.DB)
 	if err != nil {
 		return err
 	}
 
 	slog.Info("connected to database", "type", config.DB.Type)
 
-	if err := store.Migrate(config.DB.Type); err != nil {
+	if err := db.Migrate(config.DB.Type); err != nil {
 		return err
 	}
 
@@ -76,6 +76,8 @@ func run(ctx context.Context, getEnv func(string) string) error {
 			slog.Error("error shutting down server", "error", err)
 			return
 		}
+
+		db.Close()
 
 		slog.Info("server shut down gracefully")
 	}()
