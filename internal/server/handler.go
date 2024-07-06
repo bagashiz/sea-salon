@@ -3,9 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/bagashiz/sea-salon/web"
-	"github.com/bagashiz/sea-salon/web/components"
-	"github.com/bagashiz/sea-salon/web/pages"
+	"github.com/bagashiz/sea-salon/internal/web"
+	"github.com/bagashiz/sea-salon/internal/web/template"
 )
 
 // staticFiles serves the static files such as CSS, JavaScript, and images.
@@ -19,7 +18,7 @@ func staticFiles() http.Handler {
 func notFound() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		_ = pages.NotFound().Render(r.Context(), w)
+		_ = template.NotFound().Render(r.Context(), w)
 	})
 }
 
@@ -27,10 +26,10 @@ func notFound() http.Handler {
 func index() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("HX-Request") == "true" {
-			_ = components.Index().Render(r.Context(), w)
+			_ = template.LandingPage().Render(r.Context(), w)
 			return
 		}
-		_ = pages.Index().Render(r.Context(), w)
+		_ = template.Index().Render(r.Context(), w)
 	})
 }
 
@@ -38,10 +37,10 @@ func index() http.Handler {
 func register() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("HX-Request") == "true" {
-			_ = components.Register().Render(r.Context(), w)
+			_ = template.RegisterForm().Render(r.Context(), w)
 			return
 		}
-		_ = pages.Register().Render(r.Context(), w)
+		_ = template.Register().Render(r.Context(), w)
 	})
 }
 
@@ -49,9 +48,9 @@ func register() http.Handler {
 func login() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("HX-Request") == "true" {
-			_ = components.Login().Render(r.Context(), w)
+			_ = template.LoginForm().Render(r.Context(), w)
 			return
 		}
-		_ = pages.Login().Render(r.Context(), w)
+		_ = template.Login().Render(r.Context(), w)
 	})
 }

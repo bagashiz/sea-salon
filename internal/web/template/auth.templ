@@ -1,6 +1,18 @@
-package components
+package template
 
 templ Register() {
+	@Layout() {
+		@Register()
+	}
+}
+
+templ Login() {
+	@Layout() {
+		@Login()
+	}
+}
+
+templ RegisterForm() {
 	<form
 		id="register-card"
 		class="mx-auto max-w-md"
@@ -109,7 +121,7 @@ templ Register() {
 	</form>
 }
 
-templ Login() {
+templ LoginForm() {
 	<form
 		id="login-card"
 		class="mx-auto max-w-md"
