@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 	data BYTEA NOT NULL,
 	expiry TIMESTAMPTZ NOT NULL
 );
-CREATE INDEX sessions_expiry_idx ON sessions (expiry);
+CREATE INDEX sessions_expiry_key ON sessions (expiry);
 
 -- +goose Down
 DROP TABLE IF EXISTS sessions;

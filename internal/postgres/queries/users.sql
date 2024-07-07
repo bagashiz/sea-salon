@@ -9,8 +9,7 @@ INSERT INTO users (
     created_at,
     updated_at
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING *;
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 
 -- name: SelectUserByID :one
 SELECT * FROM users
@@ -40,6 +39,7 @@ SET
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteUser :exec
+-- name: DeleteUser :one
 DELETE FROM users
-WHERE id = $1;
+WHERE id = $1
+RETURNING id;

@@ -54,7 +54,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	sessionManager, err := session.New(config.App, nil)
+	sessionManager, err := session.New(config.App, db.Pool)
 	if err != nil {
 		return err
 	}

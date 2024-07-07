@@ -12,14 +12,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const deleteUser = `-- name: DeleteUser :exec
+const deleteUser = `-- name: DeleteUser :one
 DELETE FROM users
 WHERE id = $1
+RETURNING id
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteUser, id)
-	return err
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, deleteUser, id)
+	err := row.Scan(&id)
+	return id, err
 }
 
 const insertUser = `-- name: InsertUser :exec
@@ -34,7 +36,6 @@ INSERT INTO users (
     updated_at
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, role, email, password, full_name, phone_number, created_at, updated_at
 `
 
 type InsertUserParams struct {
@@ -44,8 +45,8 @@ type InsertUserParams struct {
 	FullName    string
 	PhoneNumber string
 	Role        UserRole
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
