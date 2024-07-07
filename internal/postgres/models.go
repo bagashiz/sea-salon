@@ -54,6 +54,12 @@ func (ns NullUserRole) Value() (driver.Value, error) {
 	return string(ns.UserRole), nil
 }
 
+type Session struct {
+	Token  string
+	Data   []byte
+	Expiry pgtype.Timestamptz
+}
+
 type User struct {
 	ID          uuid.UUID
 	Role        UserRole
@@ -61,6 +67,6 @@ type User struct {
 	Password    string
 	FullName    string
 	PhoneNumber string
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
 }

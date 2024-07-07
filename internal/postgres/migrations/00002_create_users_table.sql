@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP DEFAULT now(),
-    updated_at TIMESTAMP DEFAULT now()   
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()   
 );
 INSERT INTO users (
     role,

@@ -11,7 +11,7 @@ import (
 )
 
 type Querier interface {
-	DeleteUser(ctx context.Context, id uuid.UUID) error
+	DeleteUser(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) error
 	SelectAllUsers(ctx context.Context, arg SelectAllUsersParams) ([]User, error)
 	SelectUserByEmail(ctx context.Context, email string) (User, error)

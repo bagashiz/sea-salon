@@ -7,6 +7,7 @@ import (
 	"github.com/bagashiz/sea-salon/internal/app/user"
 	"github.com/bagashiz/sea-salon/internal/postgres/repository"
 	"github.com/bagashiz/sea-salon/internal/testutil"
+	"github.com/google/uuid"
 )
 
 // createUser creates a new user with random data.
@@ -41,10 +42,25 @@ func TestCreateUser(t *testing.T) {
 	repo := repository.NewUserRepository(testDB)
 	u := createUser()
 
-	err := repo.CreateUser(ctx, u)
-	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+	testCases := []struct {
+		desc string
+		user *user.User
+		err  error
+	}{
+		{desc: "valid user", user: u, err: nil},
+		{desc: "invalid user", user: &user.User{}, err: user.ErrUserInvalid},
+		{desc: "invalid role", user: &user.User{Role: "invalidrole"}, err: user.ErrUserInvalid},
+		{desc: "duplicate user", user: u, err: user.ErrUserExists},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			err := repo.CreateUser(ctx, tc.user)
+			if err != tc.err {
+				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
+				return
+			}
+		})
 	}
 }
 
@@ -59,14 +75,30 @@ func TestGetUserByID(t *testing.T) {
 		return
 	}
 
-	got, err := repo.GetUserByID(ctx, want.ID.String())
-	if err != nil {
-		t.Errorf("[GetUserByID] error: %q", err)
-		return
+	testCases := []struct {
+		desc string
+		id   string
+		err  error
+	}{
+		{desc: "existing user ID", id: want.ID.String(), err: nil},
+		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
+		{desc: "non-existing user ID", id: uuid.NewString(), err: user.ErrUserNotFound},
 	}
 
-	if diff := testutil.Diff(got, want); diff != "" {
-		t.Error(testutil.Callers(), diff)
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			got, err := repo.GetUserByID(ctx, tc.id)
+			if err != tc.err {
+				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
+				return
+			}
+
+			if err == nil {
+				if diff := testutil.Diff(got, want); diff != "" {
+					t.Errorf("[case: %s] %s %s", tc.desc, testutil.Callers(), diff)
+				}
+			}
+		})
 	}
 }
 
@@ -81,16 +113,30 @@ func TestGetUserByEmail(t *testing.T) {
 		return
 	}
 
-	got, err := repo.GetUserByEmail(ctx, want.Email)
-	if err != nil {
-		t.Errorf("[GetUserByEmail] error: %q", err)
-		return
+	testCases := []struct {
+		desc  string
+		email string
+		err   error
+	}{
+		{desc: "existing email", email: want.Email, err: nil},
+		{desc: "non-existing email", email: "notexists@email.com", err: user.ErrUserNotFound},
 	}
 
-	if diff := testutil.Diff(got, want); diff != "" {
-		t.Error(testutil.Callers(), diff)
-	}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			got, err := repo.GetUserByEmail(ctx, tc.email)
+			if err != tc.err {
+				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
+				return
+			}
 
+			if err == nil {
+				if diff := testutil.Diff(got, want); diff != "" {
+					t.Errorf("[case: %s] %s %s", tc.desc, testutil.Callers(), diff)
+				}
+			}
+		})
+	}
 }
 
 func TestListUsers(t *testing.T) {
@@ -125,30 +171,44 @@ func TestUpdateUser(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.NewUserRepository(testDB)
 
-	want := createUser()
-	err := repo.CreateUser(ctx, want)
+	dummy1 := createUser()
+	err := repo.CreateUser(ctx, dummy1)
 	if err != nil {
 		t.Errorf("[CreateUser] error: %q", err)
 		return
 	}
 
-	want.FullName = "Changed Name"
-	want.PhoneNumber = "1234567890"
-
-	err = repo.UpdateUser(ctx, want)
+	dummy2 := createUser()
+	err = repo.CreateUser(ctx, dummy2)
 	if err != nil {
-		t.Errorf("[UpdateUser] error: %q", err)
+		t.Errorf("[CreateUser] error: %q", err)
 		return
 	}
 
-	got, err := repo.GetUserByID(ctx, want.ID.String())
-	if err != nil {
-		t.Errorf("[GetUserByID] error: %q", err)
-		return
+	testCases := []struct {
+		desc string
+		user *user.User
+		err  error
+	}{
+		{desc: "valid user", user: dummy1, err: nil},
+		{desc: "update email", user: &user.User{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
+		{desc: "update full name", user: &user.User{ID: dummy1.ID, FullName: testutil.RandomFullName()}, err: nil},
+		{desc: "update phone number", user: &user.User{ID: dummy1.ID, PhoneNumber: testutil.RandomPhoneNumber()}, err: nil},
+		{desc: "update role", user: &user.User{ID: dummy1.ID, Role: "admin"}, err: nil},
+		{desc: "invalid user", user: &user.User{}, err: user.ErrUserNotFound},
+		{desc: "non-existing user", user: &user.User{ID: uuid.New()}, err: user.ErrUserNotFound},
+		{desc: "duplicate email", user: &user.User{ID: dummy1.ID, Email: dummy2.Email}, err: user.ErrUserExists},
+		{desc: "invalid role", user: &user.User{ID: dummy1.ID, Role: "invalidrole"}, err: user.ErrUserInvalid},
 	}
 
-	if diff := testutil.Diff(got, want); diff != "" {
-		t.Error(testutil.Callers(), diff)
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			err := repo.UpdateUser(ctx, tc.user)
+			if err != tc.err {
+				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
+				return
+			}
+		})
 	}
 }
 
@@ -163,15 +223,23 @@ func TestDeleteUser(t *testing.T) {
 		return
 	}
 
-	err = repo.DeleteUser(ctx, want.ID.String())
-	if err != nil {
-		t.Errorf("[DeleteUser] error: %q", err)
-		return
+	testCases := []struct {
+		desc string
+		id   string
+		err  error
+	}{
+		{desc: "existing user ID", id: want.ID.String(), err: nil},
+		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
+		{desc: "non-existing user ID", id: uuid.NewString(), err: user.ErrUserNotFound},
 	}
 
-	_, err = repo.GetUserByID(ctx, want.ID.String())
-	if err == nil {
-		t.Errorf("[GetUserByID] error: %q", err)
-		return
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			err := repo.DeleteUser(ctx, tc.id)
+			if err != tc.err {
+				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
+				return
+			}
+		})
 	}
 }

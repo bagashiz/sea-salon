@@ -6,6 +6,9 @@ import (
 	"github.com/bagashiz/sea-salon/internal/app/user"
 	"github.com/bagashiz/sea-salon/internal/postgres"
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -25,11 +28,19 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *user.User) error {
 		FullName:    u.FullName,
 		PhoneNumber: u.PhoneNumber,
 		Role:        postgres.UserRole(u.Role),
-		CreatedAt:   pgtype.Timestamp{Time: u.CreatedAt, Valid: !u.CreatedAt.IsZero()},
-		UpdatedAt:   pgtype.Timestamp{Time: u.UpdatedAt, Valid: !u.UpdatedAt.IsZero()},
+		CreatedAt:   pgtype.Timestamptz{Time: u.CreatedAt, Valid: !u.CreatedAt.IsZero()},
+		UpdatedAt:   pgtype.Timestamptz{Time: u.UpdatedAt, Valid: !u.UpdatedAt.IsZero()},
 	}
 
 	if err := r.db.InsertUser(ctx, arg); err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok {
+			if pgerrcode.IsDataException(pgErr.Code) {
+				return user.ErrUserInvalid
+			}
+			if pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+				return user.ErrUserExists
+			}
+		}
 		return err
 	}
 
@@ -44,6 +55,9 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id string) (*user.User
 
 	result, err := r.db.SelectUserByID(ctx, uid)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, user.ErrUserNotFound
+		}
 		return nil, err
 	}
 
@@ -64,6 +78,9 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id string) (*user.User
 func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
 	result, err := r.db.SelectUserByEmail(ctx, email)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, user.ErrUserNotFound
+		}
 		return nil, err
 	}
 
@@ -122,6 +139,17 @@ func (r *UserRepository) UpdateUser(ctx context.Context, u *user.User) error {
 
 	result, err := r.db.UpdateUser(ctx, arg)
 	if err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok {
+			if pgerrcode.IsDataException(pgErr.Code) {
+				return user.ErrUserInvalid
+			}
+			if pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
+				return user.ErrUserExists
+			}
+		}
+		if err == pgx.ErrNoRows {
+			return user.ErrUserNotFound
+		}
 		return err
 	}
 
@@ -143,8 +171,11 @@ func (r *UserRepository) DeleteUser(ctx context.Context, id string) error {
 		return user.ErrIDInvalid
 	}
 
-	err = r.db.DeleteUser(ctx, uid)
+	_, err = r.db.DeleteUser(ctx, uid)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return user.ErrUserNotFound
+		}
 		return err
 	}
 

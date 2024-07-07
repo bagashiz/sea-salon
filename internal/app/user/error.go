@@ -22,4 +22,8 @@ var (
 	ErrRoleInvalid = errors.New("user role must be either \"admin\" or \"customer\"")
 	// list of errors for user validation
 	ErrIDInvalid = errors.New("user ID must be a valid UUIDv4")
+	// list of errors for user repository
+	ErrUserInvalid  = errors.New("user data is invalid")
+	ErrUserExists   = errors.New("user already exists")
+	ErrUserNotFound = errors.New("user not found")
 )
