@@ -1,6 +1,8 @@
 package config
 
-import "github.com/joho/godotenv"
+import (
+	"github.com/joho/godotenv"
+)
 
 type (
 	// Config holds the application configuration.
@@ -11,10 +13,11 @@ type (
 
 	// App holds the application configuration.
 	App struct {
-		Name string
-		Env  string
-		Host string
-		Port string
+		Name            string
+		Env             string
+		Host            string
+		Port            string
+		SessionLifetime string
 	}
 
 	// DB holds the database configuration.
@@ -41,10 +44,11 @@ func New(getEnv func(string) string, path string) (*Config, error) {
 
 	return &Config{
 		App: &App{
-			Name: getEnv("APP_NAME"),
-			Env:  getEnv("APP_ENV"),
-			Host: getEnv("APP_HOST"),
-			Port: getEnv("APP_PORT"),
+			Name:            getEnv("APP_NAME"),
+			Env:             getEnv("APP_ENV"),
+			Host:            getEnv("APP_HOST"),
+			Port:            getEnv("APP_PORT"),
+			SessionLifetime: getEnv("APP_SESSION_LIFETIME"),
 		},
 		DB: &DB{
 			Type:     getEnv("DB_TYPE"),

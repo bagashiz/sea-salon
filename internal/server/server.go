@@ -4,16 +4,17 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/bagashiz/sea-salon/internal/config"
 )
 
 // The NewServer function creates a new http.Server type, configures the routes, and adds middleware.
-func NewServer(cfg *config.App) *http.Server {
+func NewServer(cfg *config.App, sessionManager *scs.SessionManager) *http.Server {
 	mux := http.NewServeMux()
 	addRoutes(mux)
 
 	var handler http.Handler = mux
-	handler = logger(handler)
+	handler = sessionManager.LoadAndSave(logger(handler))
 
 	addr := net.JoinHostPort(cfg.Host, cfg.Port)
 
