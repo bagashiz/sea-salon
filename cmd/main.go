@@ -12,6 +12,7 @@ import (
 	"github.com/bagashiz/sea-salon/internal/config"
 	"github.com/bagashiz/sea-salon/internal/postgres"
 	"github.com/bagashiz/sea-salon/internal/server"
+	"github.com/bagashiz/sea-salon/internal/session"
 )
 
 // entry point of the application.
@@ -53,7 +54,12 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	httpServer := server.NewServer(config.App)
+	sessionManager, err := session.New(config.App, nil)
+	if err != nil {
+		return err
+	}
+
+	httpServer := server.NewServer(config.App, sessionManager)
 
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
