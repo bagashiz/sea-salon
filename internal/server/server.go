@@ -31,8 +31,8 @@ func New(cfg *config.App, sessionManager *scs.SessionManager) *Server {
 	mux.Handle("GET /", notFound())
 	mux.Handle("GET /{$}", index())
 
-	mux.Handle("GET /register", register())
-	mux.Handle("GET /login", login())
+	mux.Handle("GET /register/", register())
+	mux.Handle("GET /login/", login())
 
 	server := &http.Server{
 		Addr:    net.JoinHostPort(cfg.Host, cfg.Port),
