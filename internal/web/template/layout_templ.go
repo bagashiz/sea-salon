@@ -8,6 +8,11 @@ package template
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"fmt"
+	"time"
+)
+
 func Index() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -70,7 +75,7 @@ func Layout() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script src=\"/assets/scripts/htmx.2-0-0.min.js\" defer></script><script src=\"/assets/scripts/hyperscript.0-9-12.min.js\" defer></script></head><body class=\"flex flex-col min-h-screen\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script src=\"/assets/scripts/htmx.2-0-0.min.js\" defer></script></head><body class=\"flex flex-col min-h-screen\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -120,19 +125,19 @@ func header() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-primary text-primary-foreground py-6 px-4 md:px-6\"><div class=\"container flex items-center justify-between mx-auto\"><div class=\"flex items-center gap-2\"><a href=\"#\" hx-get=\"/\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/\" class=\"flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"h-8 w-8\"><circle cx=\"6\" cy=\"6\" r=\"3\"></circle> <path d=\"M8.12 8.12 12 12\"></path> <path d=\"M20 4 8.12 15.88\"></path> <circle cx=\"6\" cy=\"18\" r=\"3\"></circle> <path d=\"M14.8 14.8 20 20\"></path></svg><h1 class=\"text-2xl font-bold\">SEA Salon</h1></a></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"sticky top-0 z-50 bg-primary shadow-md\"><nav class=\"navbar text-primary-content\"><div class=\"flex-1\" hx-boost=\"true\"><a class=\"btn btn-ghost text-xl\" href=\"/\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"h-8 w-8\"><circle cx=\"6\" cy=\"6\" r=\"3\"></circle> <path d=\"M8.12 8.12 12 12\"></path> <path d=\"M20 4 8.12 15.88\"></path> <circle cx=\"6\" cy=\"18\" r=\"3\"></circle> <path d=\"M14.8 14.8 20 20\"></path></svg> <span class=\"text-xl font-bold\">SEA Salon</span></a></div><div class=\"flex-none\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = nav().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = menu().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = mobileNav().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = mobileMenu().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -140,7 +145,7 @@ func header() templ.Component {
 	})
 }
 
-func nav() templ.Component {
+func menu() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -158,7 +163,7 @@ func nav() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"hidden md:flex items-center gap-4\"><a href=\"#\" hx-get=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\" class=\"text-md font-medium hover:underline underline-offset-4\">Register</a> <a href=\"#\" hx-get=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\" class=\"text-md font-medium hover:underline underline-offset-4\">Login</a></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"hidden md:flex menu menu-horizontal bg-inherit font-bold\" hx-boost=\"true\"><li><a href=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\">Register</a></li><li><a href=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\">Login</a></li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -166,7 +171,7 @@ func nav() templ.Component {
 	})
 }
 
-func mobileNav() templ.Component {
+func mobileMenu() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -184,7 +189,7 @@ func mobileNav() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"md:hidden relative\"><button class=\"inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400\" _=\"on click toggle .hidden on #mobile-menu\" aria-label=\"Toggle mobile menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><div id=\"mobile-menu\" class=\"hidden absolute end-0 z-10 mt-2 w-30 rounded-md border border-gray-100 bg-white shadow-lg\" role=\"menu\"><div class=\"p-2\"><a href=\"#\" hx-get=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\" class=\"block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700\" role=\"menuitem\" _=\"on click toggle .hidden on #mobile-menu\">Register</a> <a href=\"#\" hx-get=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\" class=\"block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700\" role=\"menuitem\" _=\"on click toggle .hidden on #mobile-menu\">Login</a></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"md:hidden dropdown dropdown-end\" hx-boost=\"true\"><button tabindex=\"0\" class=\"btn btn-square btn-ghost\" aria-label=\"Menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-5 w-5 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><ul tabindex=\"0\" class=\"dropdown-content menu bg-base-100 font-bold rounded-box z-[1] w-30 p-2 shadow\"><li><a href=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\">Register</a></li><li><a href=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\">Login</a></li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -210,7 +215,20 @@ func footer() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer class=\"flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center justify-center px-4 md:px-6 border-t\"><p class=\"text-xs text-muted-foreground text-center\">&copy; 2024 SEA Salon. All rights reserved.<br>Made with &hearts; by <a href=\"https://github.com/bagashiz\" target=\"_blank\" class=\"text-primary-foreground hover:text-accent hover:underline\">bagashiz</a></p></footer>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<footer class=\"footer footer-center bg-primary text-primary-content p-4\"><aside><p>&copy; ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(time.Now().Year()))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/web/template/layout.templ`, Line: 135, Col: 44}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" SEA Salon. All rights reserved.</p><span>Built with &hearts; by <a href=\"https://github.com/bagashiz\" target=\"_blank\" class=\"hover:text-accent hover:underline\">bagashiz</a></span></aside></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
