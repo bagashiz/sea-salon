@@ -19,15 +19,22 @@ log/
 
 # exclude CI files
 .github/
-.gitlab-ci.yml
+.gitlab-ci.yaml
 
 # exclude Docker files
 Dockerfile*
-docker-compose*.yml
+docker-compose*.yaml
+compose*.yaml
 
 # exclude any development-specific files
+**/*.templ
 **/*_test.go
+package.json
+*-lock.json
+*.lockb
+*.config.*
 Makefile
+Taskfile*
 coverage*
 .*ignore
 *.env
@@ -37,4 +44,5 @@ coverage*
 *.toml
 *.test
 *.yml
+*.yaml
 *.dbml

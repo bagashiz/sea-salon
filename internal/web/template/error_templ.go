@@ -38,7 +38,7 @@ func NotFound() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"grid h-screen place-content-center bg-white px-4\"><h1 class=\"uppercase tracking-widest text-gray-500\">404 | Not Found</h1></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"grid h-screen place-content-center bg-base-100\"><h1 class=\"uppercase tracking-widest text-gray-500\">404 | Not Found</h1></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
