@@ -2,18 +2,22 @@ package server
 
 import (
 	"context"
-	"log/slog"
 	"net"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/bagashiz/sea-salon/internal/config"
+	"golang.org/x/sync/errgroup"
 )
 
-// The Start function creates a new http.Server type, configures the routes, and adds middleware.
-func Start(ctx context.Context, cfg *config.App, sessionManager *scs.SessionManager) {
+// Server wraps the http.Server type for extending functionality.
+type Server struct {
+	*http.Server
+}
+
+// New creates a new http.Server type, configures the routes, and adds middleware.
+func New(cfg *config.App, sessionManager *scs.SessionManager) *Server {
 	mux := http.NewServeMux()
 
 	// global middleware
@@ -35,31 +39,33 @@ func Start(ctx context.Context, cfg *config.App, sessionManager *scs.SessionMana
 		Handler: handler,
 	}
 
-	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			slog.Error("error listening and serving", "error", err)
+	return &Server{server}
+}
+
+// Start starts the HTTP server in a separate goroutine and listens for
+// the context cancellation signal to shut down the server gracefully.
+func (s *Server) Start(ctx context.Context) error {
+	errs, ctx := errgroup.WithContext(ctx)
+
+	errs.Go(func() error {
+		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			return err
 		}
-	}()
+		return nil
+	})
 
-	slog.Info("started the HTTP server", "host", cfg.Host, "port", cfg.Port)
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
+	errs.Go(func() error {
 		<-ctx.Done()
 
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		if err := server.Shutdown(shutdownCtx); err != nil {
-			slog.Error("error shutting down server", "error", err)
-			return
+		if err := s.Shutdown(shutdownCtx); err != nil {
+			return err
 		}
 
-		slog.Info("server shut down gracefully")
-	}()
+		return nil
+	})
 
-	wg.Wait()
+	return errs.Wait()
 }

@@ -32,7 +32,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	config, err := config.New(getEnv, "")
+	config, err := config.New(getEnv)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,13 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	server.Start(ctx, config.App, sessionManager)
+	httpServer := server.New(config.App, sessionManager)
+
+	slog.Info("starting the HTTP server", "addr", httpServer.Addr)
+
+	if err := httpServer.Start(ctx); err != nil {
+		return err
+	}
 
 	return nil
 }

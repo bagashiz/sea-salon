@@ -32,7 +32,7 @@ func NewDB(ctx context.Context, cfg *config.DB) (*DB, error) {
 		return nil, err
 	}
 
-	return &DB{Querier: New(pool), Pool: pool}, nil
+	return &DB{New(pool), pool}, nil
 }
 
 // Migrate runs the goose migration tool to apply new migrations.
