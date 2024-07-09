@@ -35,9 +35,9 @@ type (
 var file = ".env"
 
 // New returns a new Config instance.
-func New(getEnv func(string) string, path string) (*Config, error) {
+func New(getEnv func(string) string) (*Config, error) {
 	if getEnv("APP_ENV") != "production" {
-		if err := godotenv.Load(path + file); err != nil {
+		if err := godotenv.Load(file); err != nil {
 			return nil, err
 		}
 	}
