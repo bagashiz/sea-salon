@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/joho/godotenv"
 )
 
@@ -36,7 +38,8 @@ var file = ".env"
 
 // New returns a new Config instance.
 func New(getEnv func(string) string) (*Config, error) {
-	if getEnv("APP_ENV") != "production" {
+	env := strings.ToLower(getEnv("APP_ENV"))
+	if env != "production" && env != "test" {
 		if err := godotenv.Load(file); err != nil {
 			return nil, err
 		}

@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"sync"
 	"testing"
 
 	"github.com/bagashiz/sea-salon/internal/app/user"
@@ -143,17 +144,30 @@ func TestListUsers(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.NewUserRepository(testDB)
 
+	if _, err := testDB.Exec(ctx, "DELETE FROM users"); err != nil {
+		t.Errorf("[ListUsers] error: %q", err)
+		return
+	}
+
 	limit := 5
 	offset := 0
 
+	var wg sync.WaitGroup
+
 	for range limit {
-		u := createUser()
-		err := repo.CreateUser(ctx, u)
-		if err != nil {
-			t.Errorf("[CreateUser] error: %q", err)
-			return
-		}
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			u := createUser()
+			err := repo.CreateUser(ctx, u)
+			if err != nil {
+				t.Errorf("[CreateUser] error: %q", err)
+				return
+			}
+		}()
 	}
+
+	wg.Wait()
 
 	got, err := repo.ListUsers(ctx, limit, offset)
 	if err != nil {
