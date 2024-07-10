@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	getEnv := func(key string) string {
 		switch key {
 		case "APP_ENV":
-			return "production"
+			return "test"
 		case "DB_TYPE":
 			return "postgres"
 		case "DB_HOST":
