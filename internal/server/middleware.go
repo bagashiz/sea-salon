@@ -9,7 +9,7 @@ import (
 // handlerFunc is a function that handles an HTTP request and returns an error.
 type handlerFunc func(http.ResponseWriter, *http.Request) error
 
-// handlerError is an error that contains an HTTP status code and message.
+// handlerError is a custom error for HTTP handlers that includes a status code.
 type handlerError struct {
 	statusCode int
 	message    string
@@ -20,7 +20,7 @@ func (h handlerError) Error() string {
 	return h.message
 }
 
-// responseWriter is a wrapper around http.ResponseWriter that stores the status code.
+// responseWriter extends the http.ResponseWriter type to store the status code.
 type responseWriter struct {
 	http.ResponseWriter
 	statusCode int
@@ -32,7 +32,8 @@ func (w *responseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-// handle wraps a handlerFunc as an http.Handler, handles errors, and logs requests.
+// handle wraps a handlerFunc type as an http.Handler, switch to custom ResponseWriter,
+// handles errors, and logs request information.
 func handle(h handlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -43,20 +44,18 @@ func handle(h handlerFunc) http.Handler {
 		}
 
 		if err := h(writer, r); err != nil {
+			statusCode := http.StatusInternalServerError
+			message := http.StatusText(statusCode)
+
 			if err, ok := err.(handlerError); ok {
-				http.Error(writer, err.message, err.statusCode)
-				slog.Error("request failed",
-					slog.Int("status", err.statusCode),
-					slog.String("error", err.Error()),
-					slog.String("method", r.Method),
-					slog.String("url", r.URL.Path),
-					slog.Duration("duration", time.Since(start)),
-				)
-				return
+				statusCode = err.statusCode
+				message = err.Error()
 			}
-			http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+
+			http.Error(writer, message, statusCode)
+
 			slog.Error("request failed",
-				slog.Int("status", http.StatusInternalServerError),
+				slog.Int("status", statusCode),
 				slog.String("error", err.Error()),
 				slog.String("method", r.Method),
 				slog.String("url", r.URL.Path),
