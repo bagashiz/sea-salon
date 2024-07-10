@@ -1,7 +1,7 @@
 package session
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/alexedwards/scs/pgxstore"
@@ -39,5 +39,5 @@ func newStore(store any) (scs.Store, error) {
 		return pgxstore.New(store.(*pgxpool.Pool)), nil
 		// add more store types here
 	}
-	return nil, errors.New("unknown session store type")
+	return nil, fmt.Errorf("unsupported store type: %T", store)
 }

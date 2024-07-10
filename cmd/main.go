@@ -43,7 +43,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 	}
 	defer db.Close()
 
-	slog.Info("connected to database", "type", config.DB.Type)
+	slog.Info("connected to the database", "type", config.DB.Type)
 
 	if err := db.Migrate(config.DB.Type); err != nil {
 		return err

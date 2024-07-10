@@ -20,22 +20,13 @@ type Server struct {
 func New(cfg *config.App, sessionManager *scs.SessionManager) *Server {
 	mux := http.NewServeMux()
 
-	// global middleware
-	var handler http.Handler = mux
-	handler = sessionManager.LoadAndSave(handler)
-	handler = logger(handler)
+	addRoutes(mux)
 
-	// routes
-	mux.Handle("GET /assets/", staticFiles())
-
-	mux.Handle("GET /", notFound())
-	mux.Handle("GET /{$}", index())
-
-	mux.Handle("GET /register/", register())
-	mux.Handle("GET /login/", login())
+	addr := net.JoinHostPort(cfg.Host, cfg.Port)
+	handler := sessionManager.LoadAndSave(mux)
 
 	server := &http.Server{
-		Addr:    net.JoinHostPort(cfg.Host, cfg.Port),
+		Addr:    addr,
 		Handler: handler,
 	}
 

@@ -8,51 +8,49 @@ import (
 )
 
 // staticFiles serves the static files such as CSS, JavaScript, and images.
-func staticFiles() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func staticFiles() handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		http.FileServerFS(web.Assets).ServeHTTP(w, r)
-	})
+		return nil
+	}
 }
 
 // notFound is the handler for the 404 page.
-func notFound() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func notFound() handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		w.WriteHeader(http.StatusNotFound)
-		_ = template.NotFound().Render(r.Context(), w)
-	})
+		return template.NotFound().Render(r.Context(), w)
+	}
 }
 
 // index is the handler for the landing page.
-func index() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func index() handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		if isHTMXRequest(r) {
-			_ = template.LandingPage().Render(r.Context(), w)
-			return
+			return template.LandingPage().Render(r.Context(), w)
 		}
-		_ = template.Index().Render(r.Context(), w)
-	})
+		return template.Index().Render(r.Context(), w)
+	}
 }
 
 // register is the handler for the registration page and form component.
-func register() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func register() handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		if isHTMXRequest(r) {
-			_ = template.RegisterForm().Render(r.Context(), w)
-			return
+			return template.RegisterForm().Render(r.Context(), w)
 		}
-		_ = template.Register().Render(r.Context(), w)
-	})
+		return template.Register().Render(r.Context(), w)
+	}
 }
 
 // login is the handler for the login page and form component.
-func login() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func login() handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
 		if isHTMXRequest(r) {
-			_ = template.LoginForm().Render(r.Context(), w)
-			return
+			return template.LoginForm().Render(r.Context(), w)
 		}
-		_ = template.Login().Render(r.Context(), w)
-	})
+		return template.Login().Render(r.Context(), w)
+	}
 }
 
 // isHTMXRequest checks request headers to determine if the request is an htmx request.
