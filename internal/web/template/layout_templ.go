@@ -75,7 +75,7 @@ func Layout() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script src=\"/assets/scripts/htmx.2-0-0.min.js\" defer></script></head><body class=\"flex flex-col min-h-screen\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"description\" content=\"Where beauty meets style. We offer a wide range of services including haircuts and styling, manicure and pedicure, facial treatments, and more. Our team of experienced professionals is dedicated to providing you with the best salon experience. Visit us today and let us enhance your natural beauty.\"><title>SEA Salon</title><link rel=\"icon\" href=\"/assets/img/favicon.png\"><link rel=\"stylesheet\" href=\"/assets/styles/globals.css\"><script defer src=\"/assets/scripts/htmx.2-0-0.min.js\"></script><script defer src=\"/assets/scripts/alpinejs.3-14-1.min.js\"></script></head><body class=\"flex flex-col min-h-screen\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,7 +222,7 @@ func footer() templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(time.Now().Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/web/template/layout.templ`, Line: 135, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/web/template/layout.templ`, Line: 136, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
