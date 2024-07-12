@@ -16,7 +16,7 @@ type UserRepository struct {
 	db DB
 }
 
-func NewUserRepository(db DB) user.ReadWriter {
+func NewUserRepository(db DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 

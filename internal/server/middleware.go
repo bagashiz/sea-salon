@@ -56,7 +56,7 @@ func handle(h handlerFunc) http.Handler {
 
 			slog.Error("request failed",
 				slog.Int("status", statusCode),
-				slog.String("error", err.Error()),
+				slog.String("error", message),
 				slog.String("method", r.Method),
 				slog.String("url", r.URL.Path),
 				slog.Duration("duration", time.Since(start)),
