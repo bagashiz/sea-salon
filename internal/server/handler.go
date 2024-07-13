@@ -39,9 +39,9 @@ func index() handlerFunc {
 func registerPage() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		if htmx.IsHTMX(r) {
-			return template.RegisterForm().Render(r.Context(), w)
+			return template.Register().Render(r.Context(), w)
 		}
-		return template.Register().Render(r.Context(), w)
+		return template.RegisterPage().Render(r.Context(), w)
 	}
 }
 
@@ -49,9 +49,9 @@ func registerPage() handlerFunc {
 func loginPage() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		if htmx.IsHTMX(r) {
-			return template.LoginForm().Render(r.Context(), w)
+			return template.Login().Render(r.Context(), w)
 		}
-		return template.Login().Render(r.Context(), w)
+		return template.LoginPage().Render(r.Context(), w)
 	}
 }
 
@@ -143,7 +143,8 @@ func register(userRepo user.ReadWriter) handlerFunc {
 		return htmx.NewResponse().
 			StatusCode(http.StatusCreated).
 			Retarget("main").
+			Reswap("transition:true").
 			PushURL("/login").
-			RenderTempl(r.Context(), w, template.LoginForm())
+			RenderTempl(r.Context(), w, template.Login())
 	}
 }
