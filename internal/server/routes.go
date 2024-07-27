@@ -7,7 +7,7 @@ import (
 	"github.com/bagashiz/sea-salon/internal/app/user"
 )
 
-func addRoutes(mux *http.ServeMux, sessionManager *scs.SessionManager, userRepo user.ReadWriter) {
+func addRoutes(mux *http.ServeMux, sessionManager *scs.SessionManager, userService *user.Service) {
 	mux.Handle("GET /assets/", handle(staticFiles()))
 
 	mux.Handle("GET /", handle(notFound()))
@@ -16,5 +16,5 @@ func addRoutes(mux *http.ServeMux, sessionManager *scs.SessionManager, userRepo 
 	mux.Handle("GET /register/", handle(registerPage()))
 	mux.Handle("GET /login/", handle(loginPage()))
 
-	mux.Handle("POST /register", handle(register(userRepo)))
+	mux.Handle("POST /register", handle(register(userService)))
 }

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -17,10 +18,8 @@ const (
 	passwordMaxLength = 64
 )
 
-var (
-	// passwordRegex is a regular expression for alphanumeric characters and symbols.
-	passwordRegex = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*()\\-_=+\\[\\]{}|;:'\",.<>?/~`]+$")
-)
+// passwordRegex is a regular expression for alphanumeric characters and symbols.
+var passwordRegex = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*()\\-_=+\\[\\]{}|;:'\",.<>?/~`]+$")
 
 // NewPassword validates and creates a new password.
 func NewPassword(password string) (Password, error) {
@@ -42,26 +41,32 @@ func NewPassword(password string) (Password, error) {
 		return "", ErrPasswordInvalid
 	}
 
-	return Password(password), nil
-}
-
-// Hash returns the hashed password with bcrypt.
-func (p Password) Hash() (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
+	hashedPassword, err := hash(password)
 	if err != nil {
 		return "", err
 	}
 
-	return string(hash), nil
+	return Password(string(hashedPassword)), nil
 }
 
 // Compare returns true if the password matches the hash.
-func (p Password) Compare(hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(p))
+func (p Password) Compare(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(p), []byte(password))
 	return err == nil
 }
 
 // String returns the string representation of the password.
 func (p Password) String() string {
 	return string(p)
+}
+
+// hash returns the hashed password with bcrypt.
+func hash(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	return string(hash), nil
 }

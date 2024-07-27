@@ -18,10 +18,10 @@ type Server struct {
 }
 
 // New creates a new http.Server type, configures the routes, and adds middleware.
-func New(cfg *config.App, sessionManager *scs.SessionManager, userRepo user.ReadWriter) *Server {
+func New(cfg *config.App, sessionManager *scs.SessionManager, userService *user.Service) *Server {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, sessionManager, userRepo)
+	addRoutes(mux, sessionManager, userService)
 
 	addr := net.JoinHostPort(cfg.Host, cfg.Port)
 	handler := sessionManager.LoadAndSave(mux)

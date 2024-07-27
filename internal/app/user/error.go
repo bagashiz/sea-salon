@@ -6,6 +6,8 @@ import (
 )
 
 var (
+	// list of errors for full name validation
+	ErrFullNameEmpty = errors.New("name cannot be empty")
 	// list of errors for email validation
 	ErrEmailEmpty            = errors.New("email cannot be empty")
 	ErrEmailExceedsMaxLength = fmt.Errorf("email cannot exceed %d characters", emailMaxLength)
@@ -15,6 +17,7 @@ var (
 	ErrPasswordTooShort = fmt.Errorf("password cannot be less %d characters long", passwordMinLength)
 	ErrPasswordTooLong  = fmt.Errorf("password cannot exceed %d characters", passwordMaxLength)
 	ErrPasswordInvalid  = errors.New("password must contain only alphanumeric characters and symbols")
+	ErrPasswordMismatch = errors.New("passwords do not match")
 	// list of errors for phone number validation
 	ErrPhoneEmpty   = errors.New("phone number cannot be empty")
 	ErrPhoneInvalid = errors.New("phone number must contain only numbers")

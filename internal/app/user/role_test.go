@@ -8,10 +8,10 @@ import (
 
 func TestNewRole(t *testing.T) {
 	testCases := []struct {
+		err   error
 		desc  string
 		input string
 		want  user.UserRole
-		err   error
 	}{
 		{desc: "admin", input: "admin", want: user.Admin, err: nil},
 		{desc: "customer", input: "customer", want: user.Customer, err: nil},
