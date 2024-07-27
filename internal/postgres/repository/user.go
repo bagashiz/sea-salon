@@ -12,15 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type UserRepository struct {
-	db DB
-}
-
-func NewUserRepository(db DB) *UserRepository {
-	return &UserRepository{db: db}
-}
-
-func (r *UserRepository) CreateUser(ctx context.Context, u *user.User) error {
+func (r *PostgresRepository) CreateUser(ctx context.Context, u *user.User) error {
 	arg := postgres.InsertUserParams{
 		ID:          u.ID,
 		Email:       u.Email,
@@ -47,7 +39,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *user.User) error {
 	return nil
 }
 
-func (r *UserRepository) GetUserByID(ctx context.Context, id string) (*user.User, error) {
+func (r *PostgresRepository) GetUserByID(ctx context.Context, id string) (*user.User, error) {
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, user.ErrIDInvalid
@@ -75,7 +67,7 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id string) (*user.User
 	return user, nil
 }
 
-func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
+func (r *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
 	result, err := r.db.SelectUserByEmail(ctx, email)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -98,7 +90,7 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*use
 	return user, nil
 }
 
-func (r *UserRepository) ListUsers(ctx context.Context, limit, offset int) ([]*user.User, error) {
+func (r *PostgresRepository) ListUsers(ctx context.Context, limit, offset int) ([]*user.User, error) {
 	arg := postgres.SelectAllUsersParams{
 		Limit:  int32(limit),
 		Offset: int32(offset),
@@ -127,7 +119,7 @@ func (r *UserRepository) ListUsers(ctx context.Context, limit, offset int) ([]*u
 	return users, nil
 }
 
-func (r *UserRepository) UpdateUser(ctx context.Context, u *user.User) error {
+func (r *PostgresRepository) UpdateUser(ctx context.Context, u *user.User) error {
 	arg := postgres.UpdateUserParams{
 		ID:          u.ID,
 		Email:       pgtype.Text{String: u.Email, Valid: u.Email != ""},
@@ -165,7 +157,7 @@ func (r *UserRepository) UpdateUser(ctx context.Context, u *user.User) error {
 	return nil
 }
 
-func (r *UserRepository) DeleteUser(ctx context.Context, id string) error {
+func (r *PostgresRepository) DeleteUser(ctx context.Context, id string) error {
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return user.ErrIDInvalid

@@ -21,14 +21,10 @@ func createUser() *user.User {
 	if err != nil {
 		return nil
 	}
-	hashedPassword, err := password.Hash()
-	if err != nil {
-		return nil
-	}
 
 	u := &user.User{
 		Email:       email,
-		Password:    hashedPassword,
+		Password:    password.String(),
 		FullName:    fullName,
 		PhoneNumber: phoneNumber,
 		Role:        role,
@@ -40,13 +36,13 @@ func createUser() *user.User {
 
 func TestCreateUser(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 	u := createUser()
 
 	testCases := []struct {
-		desc string
-		user *user.User
 		err  error
+		user *user.User
+		desc string
 	}{
 		{desc: "valid user", user: u, err: nil},
 		{desc: "invalid user", user: &user.User{}, err: user.ErrUserInvalid},
@@ -67,7 +63,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestGetUserByID(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 
 	want := createUser()
 	err := repo.CreateUser(ctx, want)
@@ -77,9 +73,9 @@ func TestGetUserByID(t *testing.T) {
 	}
 
 	testCases := []struct {
+		err  error
 		desc string
 		id   string
-		err  error
 	}{
 		{desc: "existing user ID", id: want.ID.String(), err: nil},
 		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
@@ -105,7 +101,7 @@ func TestGetUserByID(t *testing.T) {
 
 func TestGetUserByEmail(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 
 	want := createUser()
 	err := repo.CreateUser(ctx, want)
@@ -115,9 +111,9 @@ func TestGetUserByEmail(t *testing.T) {
 	}
 
 	testCases := []struct {
+		err   error
 		desc  string
 		email string
-		err   error
 	}{
 		{desc: "existing email", email: want.Email, err: nil},
 		{desc: "non-existing email", email: "notexists@email.com", err: user.ErrUserNotFound},
@@ -142,7 +138,7 @@ func TestGetUserByEmail(t *testing.T) {
 
 func TestListUsers(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 
 	if _, err := testDB.Exec(ctx, "DELETE FROM users"); err != nil {
 		t.Errorf("[ListUsers] error: %q", err)
@@ -183,7 +179,7 @@ func TestListUsers(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 
 	dummy1 := createUser()
 	err := repo.CreateUser(ctx, dummy1)
@@ -200,9 +196,9 @@ func TestUpdateUser(t *testing.T) {
 	}
 
 	testCases := []struct {
-		desc string
-		user *user.User
 		err  error
+		user *user.User
+		desc string
 	}{
 		{desc: "valid user", user: dummy1, err: nil},
 		{desc: "update email", user: &user.User{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
@@ -228,7 +224,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	ctx := context.Background()
-	repo := repository.NewUserRepository(testDB)
+	repo := repository.New(testDB)
 
 	want := createUser()
 	err := repo.CreateUser(ctx, want)
@@ -238,9 +234,9 @@ func TestDeleteUser(t *testing.T) {
 	}
 
 	testCases := []struct {
+		err  error
 		desc string
 		id   string
-		err  error
 	}{
 		{desc: "existing user ID", id: want.ID.String(), err: nil},
 		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
