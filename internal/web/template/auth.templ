@@ -12,54 +12,40 @@ templ LoginPage() {
 	}
 }
 
-templ Register() {
+templ authData() {
 	<div
-		id="register-card"
+		id="auth"
 		class="md:card md:bg-white md:shadow-xl md:mx-auto md:my-4 md:w-96"
 		hx-boost="true"
-		x-data="{ errors: {}, values: {} }"
-		@register-validation.window="
-			errors = $event.detail.errors;
-			values = $event.detail.values;
-		"
-		@register-error.window="
-		errors = {};
-		alert($event.detail.value);
-		"
+		x-data="{ values: {} }"
+		@auth-validation.window="values = $event.detail.values;"
 		@htmx:before-swap.window="
-			if ($event.detail.xhr.status === 422) {
-				$event.detail.shouldSwap = true;
-				$event.detail.isError = false;
-			}
-		"
+      if ($event.detail.xhr.status === 422) {
+        $event.detail.shouldSwap = true;
+        $event.detail.isError = false;
+      }
+    "
 	>
-		@RegisterForm()
+		{ children... }
 	</div>
+}
+
+templ Register() {
+	@authData() {
+		@RegisterForm(nil)
+	}
 }
 
 templ Login() {
-	<div
-		id="login-card"
-		class="md:card md:bg-white md:shadow-xl md:mx-auto md:my-4 md:w-96"
-		hx-boost="true"
-		x-data="{ errors: {}, values: {} }"
-		@login-validation.window="
-			errors = $event.detail.errors;
-			values = $event.detail.values;
-		"
-		@login-error.window="alert($event.detail.value);"
-		@htmx:before-swap.window="
-			if ($event.detail.xhr.status === 422) {
-				$event.detail.shouldSwap = true;
-				$event.detail.isError = false;
-			}
-		"
-	>
-		@LoginForm()
-	</div>
+	@authData() {
+		@LoginForm(false, nil)
+	}
 }
 
-templ RegisterForm() {
+templ RegisterForm(err error) {
+	if err != nil {
+		@alertError(err)
+	}
 	<form method="POST" action="/register" autocomplete="on" class="m-auto max-w-md">
 		<div class="flex flex-col p-4 space-y-1 text-center">
 			<h2 class="whitespace-nowrap tracking-tight text-2xl font-bold">Create an account</h2>
@@ -81,7 +67,6 @@ templ RegisterForm() {
 					autocomplete="on"
 					x-model="values.full_name"
 				/>
-				<p class="text-xs text-error" x-show="errors.full_name" x-text="errors.full_name"></p>
 			</div>
 			<div class="grid gap-2">
 				<label
@@ -95,10 +80,10 @@ templ RegisterForm() {
 					id="phone-number"
 					name="phone_number"
 					placeholder="081234567890"
+					type="tel"
 					autocomplete="on"
 					x-model="values.phone_number"
 				/>
-				<p class="text-xs text-error" x-show="errors.phone_number" x-text="errors.phone_number"></p>
 			</div>
 			<div class="grid gap-2">
 				<label
@@ -116,7 +101,6 @@ templ RegisterForm() {
 					autocomplete="on"
 					x-model="values.email"
 				/>
-				<p class="text-xs text-error" x-show="errors.email" x-text="errors.email"></p>
 			</div>
 			<div class="grid gap-2">
 				<label
@@ -131,7 +115,6 @@ templ RegisterForm() {
 					name="password"
 					type="password"
 				/>
-				<p class="text-xs text-error" x-show="errors.password" x-text="errors.password"></p>
 			</div>
 			<div class="grid gap-2">
 				<label
@@ -146,7 +129,6 @@ templ RegisterForm() {
 					name="confirm_password"
 					type="password"
 				/>
-				<p class="text-xs text-error" x-show="errors.confirm_password" x-text="errors.confirm_password"></p>
 			</div>
 		</div>
 		<div hx-boost="true" class="flex justify-center">
@@ -172,7 +154,13 @@ templ RegisterForm() {
 	</form>
 }
 
-templ LoginForm() {
+templ LoginForm(fromRegister bool, err error) {
+	if err != nil {
+		@alertError(err)
+	}
+	if fromRegister {
+		@alertSuccess("Registration successful! Please log in to continue.")
+	}
 	<form method="POST" action="/auth/login" autocomplete="on" class="m-auto max-w-md">
 		<div class="flex flex-col p-4 space-y-1 text-center">
 			<h2 class="whitespace-nowrap tracking-tight text-2xl font-bold">Sign in to your account</h2>
