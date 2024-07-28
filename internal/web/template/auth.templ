@@ -17,8 +17,7 @@ templ authData() {
 		id="auth"
 		class="md:card md:bg-white md:shadow-xl md:mx-auto md:my-4 md:w-96"
 		hx-boost="true"
-		x-data="{ values: {} }"
-		@auth-validation.window="values = $event.detail.values;"
+		x-data="{ full_name: '', phone_number: '', email: '' }"
 		@htmx:before-swap.window="
       if ($event.detail.xhr.status === 422) {
         $event.detail.shouldSwap = true;
@@ -65,7 +64,7 @@ templ RegisterForm(err error) {
 					name="full_name"
 					placeholder="John Doe"
 					autocomplete="on"
-					x-model="values.full_name"
+					x-model="full_name"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -82,7 +81,7 @@ templ RegisterForm(err error) {
 					placeholder="081234567890"
 					type="tel"
 					autocomplete="on"
-					x-model="values.phone_number"
+					x-model="phone_number"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -99,7 +98,7 @@ templ RegisterForm(err error) {
 					placeholder="example@email.com"
 					type="email"
 					autocomplete="on"
-					x-model="values.email"
+					x-model="email"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -181,7 +180,7 @@ templ LoginForm(fromRegister bool, err error) {
 					placeholder="example@email.com"
 					type="email"
 					autocomplete="on"
-					x-model="values.email"
+					x-model="email"
 				/>
 			</div>
 			<div class="grid gap-2">

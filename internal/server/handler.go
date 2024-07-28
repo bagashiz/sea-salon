@@ -76,11 +76,6 @@ func register(userService *user.Service) handlerFunc {
 				StatusCode(http.StatusUnprocessableEntity).
 				Retarget("#auth").
 				PreventPushURL().
-				AddTrigger(
-					htmx.TriggerObject("register-validation", map[string]any{
-						"values": formValues,
-					}),
-				).
 				RenderTempl(r.Context(), w, template.RegisterForm(err))
 		}
 
