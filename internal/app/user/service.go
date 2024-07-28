@@ -2,15 +2,21 @@ package user
 
 import "context"
 
+// Service provides user business logic and operations.
 type Service struct {
 	repo ReadWriter
 }
 
+// NewService creates a new user service instance.
 func NewService(repo ReadWriter) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) CreateAccount(ctx context.Context, fullName, phoneNumber, email, password, confirmPassword string) (*User, error) {
+// CreateAccount validates, creates, and stores a new user account.
+func (s *Service) CreateAccount(
+	ctx context.Context,
+	fullName, phoneNumber, email, password, confirmPassword string,
+) (*User, error) {
 	var input struct {
 		fullName    string
 		email       Email
@@ -41,11 +47,16 @@ func (s *Service) CreateAccount(ctx context.Context, fullName, phoneNumber, emai
 		}
 	}
 
+	hashedPassword, err := input.password.Hash()
+	if err != nil {
+		return nil, err
+	}
+
 	user, err := NewUser(
 		input.fullName,
 		input.phoneNumber,
 		input.email,
-		input.password,
+		hashedPassword,
 		"customer",
 	)
 	if err != nil {

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -41,32 +40,25 @@ func NewPassword(password string) (Password, error) {
 		return "", ErrPasswordInvalid
 	}
 
-	hashedPassword, err := hash(password)
+	return Password(password), nil
+}
+
+// Hash returns the hashed password with bcrypt typed as Password.
+func (p Password) Hash() (Password, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
-
-	return Password(string(hashedPassword)), nil
+	return Password(string(hash)), nil
 }
 
 // Compare returns true if the password matches the hash.
-func (p Password) Compare(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(p), []byte(password))
+func (p Password) Compare(hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(p))
 	return err == nil
 }
 
 // String returns the string representation of the password.
 func (p Password) String() string {
 	return string(p)
-}
-
-// hash returns the hashed password with bcrypt.
-func hash(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		fmt.Println(err)
-		return "", err
-	}
-
-	return string(hash), nil
 }

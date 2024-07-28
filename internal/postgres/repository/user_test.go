@@ -22,9 +22,14 @@ func createUser() *user.User {
 		return nil
 	}
 
+	hashedPassword, err := password.Hash()
+	if err != nil {
+		return nil
+	}
+
 	u := &user.User{
 		Email:       email,
-		Password:    password.String(),
+		Password:    hashedPassword.String(),
 		FullName:    fullName,
 		PhoneNumber: phoneNumber,
 		Role:        role,
