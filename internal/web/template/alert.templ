@@ -5,7 +5,7 @@ templ alertError(err error) {
 		x-data="{ isOpen: true }"
 		x-show="isOpen"
 		x-init="setTimeout(() => isOpen = false, 5000)"
-		class="toast toast-top toast-center z-50 mt-20"
+		class="toast toast-top toast-center z-50"
 	>
 		<button @click="isOpen = false" role="alert" class="alert alert-error shadow-lg">
 			<svg
@@ -31,7 +31,7 @@ templ alertSuccess(message string) {
 		x-data="{ isOpen: true }"
 		x-show="isOpen"
 		x-init="setTimeout(() => isOpen = false, 5000)"
-		class="toast toast-top toast-center z-50 mt-20"
+		class="toast toast-top toast-center z-50"
 	>
 		<button @click="isOpen = false" role="alert" class="alert alert-success shadow-lg">
 			<svg

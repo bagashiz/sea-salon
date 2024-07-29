@@ -134,10 +134,9 @@ templ RegisterForm(err error) {
 			<p class="text-sm">
 				Already have an account? 
 				<a
-					href="/login"
+					href="/login/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/login"
 					class="text-sm text-primary-content hover:text-accent hover:underline"
 				><b>Sign in</b></a>
 			</p>
@@ -160,7 +159,7 @@ templ LoginForm(fromRegister bool, err error) {
 	if fromRegister {
 		@alertSuccess("Registration successful! Please log in to continue.")
 	}
-	<form method="POST" action="/auth/login" autocomplete="on" class="m-auto max-w-md">
+	<form method="POST" action="/login" autocomplete="on" class="m-auto max-w-md">
 		<div class="flex flex-col p-4 space-y-1 text-center">
 			<h2 class="whitespace-nowrap tracking-tight text-2xl font-bold">Sign in to your account</h2>
 			<p class="text-sm">Enter your credentials to access your account.</p>
@@ -202,10 +201,9 @@ templ LoginForm(fromRegister bool, err error) {
 			<p class="text-sm">
 				Don't have an account? 
 				<a
-					href="/register"
+					href="/register/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/register"
 					class="text-sm text-primary-content hover:text-accent hover:underline"
 				><b>Sign up</b></a>
 			</p>

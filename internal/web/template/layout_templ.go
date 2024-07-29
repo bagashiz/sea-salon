@@ -163,7 +163,7 @@ func menu() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"hidden md:flex menu menu-horizontal bg-inherit font-bold\" hx-boost=\"true\"><li><a href=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\">Register</a></li><li><a href=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\">Login</a></li></ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"hidden md:flex menu menu-horizontal bg-inherit font-bold\" hx-boost=\"true\"><li><a href=\"/register/\" hx-target=\"main\" hx-swap=\"transition:true\">Register</a></li><li><a href=\"/login/\" hx-target=\"main\" hx-swap=\"transition:true\">Login</a></li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -189,7 +189,7 @@ func mobileMenu() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"md:hidden dropdown dropdown-end\" hx-boost=\"true\"><button tabindex=\"0\" class=\"btn btn-square btn-ghost\" aria-label=\"Menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-5 w-5 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><ul tabindex=\"0\" class=\"dropdown-content menu bg-white font-bold rounded-box z-[1] w-30 p-2 shadow\"><li><a href=\"/register\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/register\">Register</a></li><li><a href=\"/login\" hx-target=\"main\" hx-swap=\"transition:true\" hx-push-url=\"/login\">Login</a></li></ul></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"md:hidden dropdown dropdown-end\" hx-boost=\"true\"><button tabindex=\"0\" class=\"btn btn-square btn-ghost\" aria-label=\"Menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-5 w-5 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button><ul tabindex=\"0\" class=\"dropdown-content menu bg-white font-bold rounded-box z-[1] w-30 p-2 shadow\"><li><a href=\"/register/\" hx-target=\"main\" hx-swap=\"transition:true\">Register</a></li><li><a href=\"/login/\" hx-target=\"main\" hx-swap=\"transition:true\">Login</a></li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,7 +222,7 @@ func footer() templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(time.Now().Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/web/template/layout.templ`, Line: 136, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/web/template/layout.templ`, Line: 132, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
