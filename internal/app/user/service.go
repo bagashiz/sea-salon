@@ -70,3 +70,33 @@ func (s *Service) CreateAccount(
 
 	return user, nil
 }
+
+func (s *Service) GetUserByEmail(ctx context.Context, email, password string) (*User, error) {
+	var input struct {
+		email    Email
+		password Password
+	}
+	{
+		var err error
+
+		input.email, err = NewEmail(email)
+		if err != nil {
+			return nil, err
+		}
+		input.password, err = NewPassword(password)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	user, err := s.repo.GetUserByEmail(ctx, input.email.String())
+	if err != nil {
+		return nil, err
+	}
+
+	if ok := input.password.Compare(user.Password); !ok {
+		return nil, ErrPasswordMismatch
+	}
+
+	return user, nil
+}

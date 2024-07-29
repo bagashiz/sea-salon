@@ -14,7 +14,7 @@ var (
 	ErrEmailInvalid          = errors.New("email must be a valid email address")
 	// list of errors for password validation
 	ErrPasswordEmpty    = errors.New("password cannot be empty")
-	ErrPasswordTooShort = fmt.Errorf("password cannot be less %d characters long", passwordMinLength)
+	ErrPasswordTooShort = fmt.Errorf("password cannot be less than %d characters long", passwordMinLength)
 	ErrPasswordTooLong  = fmt.Errorf("password cannot exceed %d characters", passwordMaxLength)
 	ErrPasswordInvalid  = errors.New("password must contain only alphanumeric characters and symbols")
 	ErrPasswordMismatch = errors.New("passwords do not match")

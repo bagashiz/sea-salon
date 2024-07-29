@@ -17,4 +17,5 @@ func addRoutes(mux *http.ServeMux, sessionManager *scs.SessionManager, userServi
 	mux.Handle("GET /login/", handle(loginPage()))
 
 	mux.Handle("POST /register", handle(register(userService)))
+	mux.Handle("POST /login", handle(login(sessionManager, userService)))
 }
