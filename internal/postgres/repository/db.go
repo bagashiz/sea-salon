@@ -11,3 +11,11 @@ type DB interface {
 	postgres.Querier
 	ExecTX(ctx context.Context, fn func(postgres.Querier) error) error
 }
+
+type PostgresRepository struct {
+	db DB
+}
+
+func New(db DB) *PostgresRepository {
+	return &PostgresRepository{db: db}
+}

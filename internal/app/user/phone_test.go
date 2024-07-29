@@ -8,10 +8,10 @@ import (
 
 func TestNewPhone(t *testing.T) {
 	testCases := []struct {
+		err   error
 		desc  string
 		input string
 		want  user.PhoneNumber
-		err   error
 	}{
 		{desc: "valid phone number", input: "08123456789", want: user.PhoneNumber("08123456789"), err: nil},
 		{desc: "valid phone number", input: "628123456789", want: user.PhoneNumber("628123456789"), err: nil},

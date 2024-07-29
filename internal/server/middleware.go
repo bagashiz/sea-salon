@@ -11,8 +11,8 @@ type handlerFunc func(http.ResponseWriter, *http.Request) error
 
 // handlerError is a custom error for HTTP handlers that includes a status code.
 type handlerError struct {
-	statusCode int
 	message    string
+	statusCode int
 }
 
 // Error returns the error message for the handlerError type.
@@ -56,7 +56,7 @@ func handle(h handlerFunc) http.Handler {
 
 			slog.Error("request failed",
 				slog.Int("status", statusCode),
-				slog.String("error", err.Error()),
+				slog.String("error", message),
 				slog.String("method", r.Method),
 				slog.String("url", r.URL.Path),
 				slog.Duration("duration", time.Since(start)),

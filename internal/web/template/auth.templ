@@ -1,58 +1,87 @@
 package template
 
-templ Register() {
+templ RegisterPage() {
 	@Layout() {
-		@RegisterForm()
+		@Register()
+	}
+}
+
+templ LoginPage() {
+	@Layout() {
+		@Login()
+	}
+}
+
+templ authData() {
+	<div
+		id="auth"
+		class="md:card md:bg-white md:shadow-xl md:mx-auto md:my-4 md:w-96"
+		hx-boost="true"
+		x-data="{ full_name: '', phone_number: '', email: '' }"
+		@htmx:before-swap.window="
+      if ($event.detail.xhr.status === 422) {
+        $event.detail.shouldSwap = true;
+        $event.detail.isError = false;
+      }
+    "
+	>
+		{ children... }
+	</div>
+}
+
+templ Register() {
+	@authData() {
+		@RegisterForm(nil)
 	}
 }
 
 templ Login() {
-	@Layout() {
-		@LoginForm()
+	@authData() {
+		@LoginForm(false, nil)
 	}
 }
 
-templ RegisterForm() {
-	<form
-		id="register-card"
-		class="mx-auto max-w-md"
-		autocomplete="on"
-		hx-post="/auth/register"
-		hx-target="main"
-		hx-swap="transition:true"
-		hx-push-url="/login"
-	>
-		<div class="flex flex-col p-6 space-y-1 text-center">
+templ RegisterForm(err error) {
+	if err != nil {
+		@alertError(err)
+	}
+	<form method="POST" action="/register" autocomplete="on" class="m-auto max-w-md">
+		<div class="flex flex-col p-4 space-y-1 text-center">
 			<h2 class="whitespace-nowrap tracking-tight text-2xl font-bold">Create an account</h2>
 			<p class="text-sm">Get started with our services by creating a new account.</p>
 		</div>
-		<div class="p-6 space-y-4">
+		<div class="p-4 space-y-4">
 			<div class="grid gap-2">
 				<label
 					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-					for="name"
+					for="full-name"
 				>
 					Full Name
 				</label>
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-					id="name"
+					id="full-name"
+					name="full_name"
 					placeholder="John Doe"
 					autocomplete="on"
+					x-model="full_name"
 				/>
 			</div>
 			<div class="grid gap-2">
 				<label
 					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-					for="phone"
+					for="phone-number"
 				>
 					Phone Number
 				</label>
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-					id="phone"
+					id="phone-number"
+					name="phone_number"
 					placeholder="081234567890"
+					type="tel"
 					autocomplete="on"
+					x-model="phone_number"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -65,9 +94,11 @@ templ RegisterForm() {
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					id="email"
+					name="email"
 					placeholder="example@email.com"
 					type="email"
 					autocomplete="on"
+					x-model="email"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -80,6 +111,7 @@ templ RegisterForm() {
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					id="password"
+					name="password"
 					type="password"
 				/>
 			</div>
@@ -93,19 +125,18 @@ templ RegisterForm() {
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					id="confirm-password"
+					name="confirm_password"
 					type="password"
 				/>
 			</div>
 		</div>
-		<div class="flex justify-center">
+		<div hx-boost="true" class="flex justify-center">
 			<p class="text-sm">
 				Already have an account? 
 				<a
-					href="#"
-					hx-get="/login"
+					href="/login/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/login"
 					class="text-sm text-primary-content hover:text-accent hover:underline"
 				><b>Sign in</b></a>
 			</p>
@@ -121,21 +152,19 @@ templ RegisterForm() {
 	</form>
 }
 
-templ LoginForm() {
-	<form
-		id="login-card"
-		class="mx-auto max-w-md"
-		autocomplete="on"
-		hx-post="/auth/login"
-		hx-target="main"
-		hx-swap="transition:true"
-		hx-push-url="/"
-	>
-		<div class="flex flex-col p-6 space-y-1 text-center">
+templ LoginForm(fromRegister bool, err error) {
+	if err != nil {
+		@alertError(err)
+	}
+	if fromRegister {
+		@alertSuccess("Registration successful! Please log in to continue.")
+	}
+	<form method="POST" action="/login" autocomplete="on" class="m-auto max-w-md">
+		<div class="flex flex-col p-4 space-y-1 text-center">
 			<h2 class="whitespace-nowrap tracking-tight text-2xl font-bold">Sign in to your account</h2>
 			<p class="text-sm">Enter your credentials to access your account.</p>
 		</div>
-		<div class="p-6 space-y-4">
+		<div class="p-4 space-y-4">
 			<div class="grid gap-2">
 				<label
 					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -146,9 +175,11 @@ templ LoginForm() {
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					id="email"
+					name="email"
 					placeholder="example@email.com"
 					type="email"
 					autocomplete="on"
+					x-model="email"
 				/>
 			</div>
 			<div class="grid gap-2">
@@ -161,19 +192,18 @@ templ LoginForm() {
 				<input
 					class="flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					id="password"
+					name="password"
 					type="password"
 				/>
 			</div>
 		</div>
-		<div class="flex justify-center">
+		<div hx-boost="true" class="flex justify-center">
 			<p class="text-sm">
 				Don't have an account? 
 				<a
-					href="#"
-					hx-get="/register"
+					href="/register/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/register"
 					class="text-sm text-primary-content hover:text-accent hover:underline"
 				><b>Sign up</b></a>
 			</p>

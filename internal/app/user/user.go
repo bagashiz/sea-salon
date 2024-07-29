@@ -19,7 +19,7 @@ type User struct {
 }
 
 // NewUser creates a new user.
-func NewUser(fullName string, email Email, password Password, phoneNumber PhoneNumber, userRole UserRole) (*User, error) {
+func NewUser(fullName string, phoneNumber PhoneNumber, email Email, password Password, userRole UserRole) (*User, error) {
 	return &User{
 		FullName:    fullName,
 		Email:       email.String(),

@@ -21,7 +21,8 @@ templ Layout() {
 			<title>SEA Salon</title>
 			<link rel="icon" href="/assets/img/favicon.png"/>
 			<link rel="stylesheet" href="/assets/styles/globals.css"/>
-			<script src="/assets/scripts/htmx.2-0-0.min.js" defer></script>
+			<script defer src="/assets/scripts/htmx.2-0-0.min.js"></script>
+			<script defer src="/assets/scripts/alpinejs.3-14-1.min.js"></script>
 		</head>
 		<body class="flex flex-col min-h-screen">
 			@header()
@@ -35,7 +36,7 @@ templ Layout() {
 
 templ header() {
 	<header class="sticky top-0 z-50 bg-primary shadow-md">
-		<nav class="navbar text-primary-content">
+		<nav class="navbar p-0 text-primary-content">
 			<div class="flex-1" hx-boost="true">
 				<a
 					class="btn btn-ghost text-xl"
@@ -66,20 +67,18 @@ templ menu() {
 	<ul class="hidden md:flex menu menu-horizontal bg-inherit font-bold" hx-boost="true">
 		<li>
 			<a
-				href="/register"
+				href="/register/"
 				hx-target="main"
 				hx-swap="transition:true"
-				hx-push-url="/register"
 			>
 				Register
 			</a>
 		</li>
 		<li>
 			<a
-				href="/login"
+				href="/login/"
 				hx-target="main"
 				hx-swap="transition:true"
-				hx-push-url="/login"
 			>
 				Login
 			</a>
@@ -104,23 +103,21 @@ templ mobileMenu() {
 				></path>
 			</svg>
 		</button>
-		<ul tabindex="0" class="dropdown-content menu bg-base-100 font-bold rounded-box z-[1] w-30 p-2 shadow">
+		<ul tabindex="0" class="dropdown-content menu bg-white font-bold rounded-box z-[1] w-30 p-2 shadow">
 			<li>
 				<a
-					href="/register"
+					href="/register/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/register"
 				>
 					Register
 				</a>
 			</li>
 			<li>
 				<a
-					href="/login"
+					href="/login/"
 					hx-target="main"
 					hx-swap="transition:true"
-					hx-push-url="/login"
 				>
 					Login
 				</a>

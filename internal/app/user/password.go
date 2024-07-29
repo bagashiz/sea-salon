@@ -17,10 +17,8 @@ const (
 	passwordMaxLength = 64
 )
 
-var (
-	// passwordRegex is a regular expression for alphanumeric characters and symbols.
-	passwordRegex = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*()\\-_=+\\[\\]{}|;:'\",.<>?/~`]+$")
-)
+// passwordRegex is a regular expression for alphanumeric characters and symbols.
+var passwordRegex = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*()\\-_=+\\[\\]{}|;:'\",.<>?/~`]+$")
 
 // NewPassword validates and creates a new password.
 func NewPassword(password string) (Password, error) {
@@ -45,14 +43,13 @@ func NewPassword(password string) (Password, error) {
 	return Password(password), nil
 }
 
-// Hash returns the hashed password with bcrypt.
-func (p Password) Hash() (string, error) {
+// Hash returns the hashed password with bcrypt typed as Password.
+func (p Password) Hash() (Password, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
-
-	return string(hash), nil
+	return Password(string(hash)), nil
 }
 
 // Compare returns true if the password matches the hash.

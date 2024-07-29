@@ -6,8 +6,10 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/bagashiz/sea-salon/internal/app/user"
 	"github.com/bagashiz/sea-salon/internal/config"
 	"github.com/bagashiz/sea-salon/internal/postgres"
+	"github.com/bagashiz/sea-salon/internal/postgres/repository"
 	"github.com/bagashiz/sea-salon/internal/server"
 	"github.com/bagashiz/sea-salon/internal/session"
 )
@@ -54,9 +56,12 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	httpServer := server.New(config.App, sessionManager)
+	postgresRepo := repository.New(db)
+	userService := user.NewService(postgresRepo)
 
-	slog.Info("starting the HTTP server", "addr", httpServer.Addr)
+	httpServer := server.New(config.App, sessionManager, userService)
+
+	slog.Info("starting the http server", "addr", httpServer.Addr)
 
 	if err := httpServer.Start(ctx); err != nil {
 		return err

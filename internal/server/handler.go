@@ -3,6 +3,9 @@ package server
 import (
 	"net/http"
 
+	"github.com/alexedwards/scs/v2"
+	"github.com/angelofallars/htmx-go"
+	"github.com/bagashiz/sea-salon/internal/app/user"
 	"github.com/bagashiz/sea-salon/internal/web"
 	"github.com/bagashiz/sea-salon/internal/web/template"
 )
@@ -26,34 +29,93 @@ func notFound() handlerFunc {
 // index is the handler for the landing page.
 func index() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		if isHTMXRequest(r) {
+		if htmx.IsHTMX(r) {
 			return template.LandingPage().Render(r.Context(), w)
 		}
 		return template.Index().Render(r.Context(), w)
 	}
 }
 
-// register is the handler for the registration page and form component.
-func register() handlerFunc {
+// registerPage is the handler for the registration page and form component.
+func registerPage() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		if isHTMXRequest(r) {
-			return template.RegisterForm().Render(r.Context(), w)
+		if htmx.IsHTMX(r) {
+			return template.Register().Render(r.Context(), w)
 		}
-		return template.Register().Render(r.Context(), w)
+		return template.RegisterPage().Render(r.Context(), w)
 	}
 }
 
-// login is the handler for the login page and form component.
-func login() handlerFunc {
+// loginPage is the handler for the login page and form component.
+func loginPage() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		if isHTMXRequest(r) {
-			return template.LoginForm().Render(r.Context(), w)
+		if htmx.IsHTMX(r) {
+			return template.Login().Render(r.Context(), w)
 		}
-		return template.Login().Render(r.Context(), w)
+		return template.LoginPage().Render(r.Context(), w)
 	}
 }
 
-// isHTMXRequest checks request headers to determine if the request is an htmx request.
-func isHTMXRequest(r *http.Request) bool {
-	return r.Header.Get("HX-Request") == "true"
+// register is the handler for the registration form submission.
+func register(userService *user.Service) handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		formValues, err := parseForm(r)
+		if err != nil {
+			return err
+		}
+
+		_, err = userService.CreateAccount(
+			r.Context(),
+			formValues["full_name"],
+			formValues["phone_number"],
+			formValues["email"],
+			formValues["password"],
+			formValues["confirm_password"],
+		)
+		if err != nil {
+			return htmx.NewResponse().
+				StatusCode(http.StatusUnprocessableEntity).
+				Retarget("#auth").
+				PreventPushURL().
+				RenderTempl(r.Context(), w, template.RegisterForm(err))
+		}
+
+		return htmx.NewResponse().
+			StatusCode(http.StatusCreated).
+			Retarget("#auth").
+			Reswap("transition:true").
+			PushURL("/login/").
+			RenderTempl(r.Context(), w, template.LoginForm(true, nil))
+	}
+}
+
+func login(sessionManager *scs.SessionManager, userService *user.Service) handlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		formValues, err := parseForm(r)
+		if err != nil {
+			return err
+		}
+
+		currentUser, err := userService.GetUserByEmail(
+			r.Context(),
+			formValues["email"],
+			formValues["password"],
+		)
+		if err != nil {
+			return htmx.NewResponse().
+				StatusCode(http.StatusUnprocessableEntity).
+				Retarget("#auth").
+				PreventPushURL().
+				RenderTempl(r.Context(), w, template.LoginForm(false, err))
+		}
+
+		sessionManager.Put(r.Context(), "user_id", currentUser.ID.String())
+
+		return htmx.NewResponse().
+			StatusCode(http.StatusOK).
+			Retarget("main").
+			Reswap("transition:true").
+			PushURL("/").
+			RenderTempl(r.Context(), w, template.LandingPage()) // TODO: redirect to the user's dashboard
+	}
 }

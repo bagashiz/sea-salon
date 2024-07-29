@@ -9,10 +9,10 @@ import (
 // TestNewEmail tests the NewEmail function.
 func TestNewEmail(t *testing.T) {
 	testCases := []struct {
+		err   error
 		desc  string
 		input string
 		want  user.Email
-		err   error
 	}{
 		{desc: "valid email", input: "test@example.com", want: user.Email("test@example.com"), err: nil},
 		{desc: "valid email", input: "test+go-salon@example.com", want: user.Email("test+go-salon@example.com"), err: nil},

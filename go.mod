@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.2.747
 	github.com/alexedwards/scs/pgxstore v0.0.0-20240316134038-7e11d57e8885
 	github.com/alexedwards/scs/v2 v2.8.0
+	github.com/angelofallars/htmx-go v0.5.0
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
