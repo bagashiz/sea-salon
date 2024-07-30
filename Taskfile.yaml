@@ -14,6 +14,7 @@ tasks:
     cmds:
       - task: install
       - task: service:up
+      - sleep 5
       - task: migrate:up
       - task: test
 

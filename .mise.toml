@@ -1,2 +1,4 @@
 [tools]
 golang = '1.22.5'
+golangci-lint = "latest"
+task = "latest"
