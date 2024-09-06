@@ -53,16 +53,7 @@ func (r *PostgresRepository) GetUserByID(ctx context.Context, id string) (*user.
 		return nil, err
 	}
 
-	user := &user.User{
-		ID:          result.ID,
-		FullName:    result.FullName,
-		Email:       result.Email,
-		Password:    result.Password,
-		PhoneNumber: result.PhoneNumber,
-		Role:        string(result.Role),
-		CreatedAt:   result.CreatedAt.Time,
-		UpdatedAt:   result.UpdatedAt.Time,
-	}
+	user := result.ToDomain()
 
 	return user, nil
 }
@@ -76,16 +67,7 @@ func (r *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (
 		return nil, err
 	}
 
-	user := &user.User{
-		ID:          result.ID,
-		FullName:    result.FullName,
-		Email:       result.Email,
-		Password:    result.Password,
-		PhoneNumber: result.PhoneNumber,
-		Role:        string(result.Role),
-		CreatedAt:   result.CreatedAt.Time,
-		UpdatedAt:   result.UpdatedAt.Time,
-	}
+	user := result.ToDomain()
 
 	return user, nil
 }
@@ -104,16 +86,7 @@ func (r *PostgresRepository) ListUsers(ctx context.Context, limit, offset int) (
 	var users []*user.User
 
 	for _, u := range result {
-		users = append(users, &user.User{
-			ID:          u.ID,
-			FullName:    u.FullName,
-			Email:       u.Email,
-			Password:    u.Password,
-			PhoneNumber: u.PhoneNumber,
-			Role:        string(u.Role),
-			CreatedAt:   u.CreatedAt.Time,
-			UpdatedAt:   u.UpdatedAt.Time,
-		})
+		users = append(users, u.ToDomain())
 	}
 
 	return users, nil
@@ -145,14 +118,8 @@ func (r *PostgresRepository) UpdateUser(ctx context.Context, u *user.User) error
 		return err
 	}
 
-	u.ID = result.ID
-	u.FullName = result.FullName
-	u.Email = result.Email
-	u.Password = result.Password
-	u.PhoneNumber = result.PhoneNumber
-	u.Role = string(result.Role)
-	u.CreatedAt = result.CreatedAt.Time
-	u.UpdatedAt = result.UpdatedAt.Time
+	u = result.ToDomain()
+	_ = u // avoid linter warning
 
 	return nil
 }
