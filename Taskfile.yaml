@@ -5,9 +5,6 @@ version: "3"
 dotenv:
   - ".env"
 
-env:
-  DSN: "{{.DB_TYPE}}://{{.DB_USER}}:{{.DB_PASSWORD}}@{{.DB_HOST}}:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable"
-
 tasks:
   default:
     desc: "Gettings started"
@@ -52,11 +49,11 @@ tasks:
 
   migrate:up:
     desc: "Run database migrations"
-    cmd: goose -dir internal/postgres/migrations postgres $DSN up
+    cmd: goose -dir internal/postgres/migrations postgres {{.DB_URI}} up
 
   migrate:down:
     desc: "Rollback to previous database migration"
-    cmd: goose -dir internal/postgres/migrations postgres $DSN down
+    cmd: goose -dir internal/postgres/migrations postgres {{.DB_URI}} down
 
   sqlc:
     desc: "Generate SQLC code"

@@ -39,7 +39,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	db, err := postgres.NewDB(ctx, config.DB)
+	db, err := postgres.NewDB(ctx, config.DB.URI)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 
 	slog.Info("connected to the database", "type", config.DB.Type)
 
-	if err := db.Migrate(config.DB.Type); err != nil {
+	if err := db.Migrate(); err != nil {
 		return err
 	}
 
