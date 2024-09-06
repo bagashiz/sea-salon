@@ -30,6 +30,7 @@ type (
 		User     string
 		Password string
 		Name     string
+		URI      string
 	}
 )
 
@@ -60,6 +61,7 @@ func New(getEnv func(string) string) (*Config, error) {
 			User:     getEnv("DB_USER"),
 			Password: getEnv("DB_PASSWORD"),
 			Name:     getEnv("DB_NAME"),
+			URI:      getEnv("DB_URI"),
 		},
 	}, nil
 }
