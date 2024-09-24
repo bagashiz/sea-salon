@@ -13,13 +13,13 @@ func TestNewPhone(t *testing.T) {
 		input string
 		want  user.PhoneNumber
 	}{
-		{desc: "valid phone number", input: "08123456789", want: user.PhoneNumber("08123456789"), err: nil},
-		{desc: "valid phone number", input: "628123456789", want: user.PhoneNumber("628123456789"), err: nil},
-		{desc: "empty phone number", input: "", want: "", err: user.ErrPhoneEmpty},
-		{desc: "invalid phone number", input: "+628123456789", want: "", err: user.ErrPhoneInvalid},
-		{desc: "invalid phone number", input: "0812-345-6789", want: "", err: user.ErrPhoneInvalid},
-		{desc: "invalid phone number", input: "+1 (123) 456-7890", want: "", err: user.ErrPhoneInvalid},
-		{desc: "invalid phone number", input: "0812345678a", want: "", err: user.ErrPhoneInvalid},
+		{desc: "valid_phone_number_0", input: "08123456789", want: user.PhoneNumber("08123456789"), err: nil},
+		{desc: "valid_phone_number_1", input: "628123456789", want: user.PhoneNumber("628123456789"), err: nil},
+		{desc: "empty_phone_number", input: "", want: "", err: user.ErrPhoneEmpty},
+		{desc: "invalid_phone_number_0", input: "+628123456789", want: "", err: user.ErrPhoneInvalid},
+		{desc: "invalid_phone_number_1", input: "0812-345-6789", want: "", err: user.ErrPhoneInvalid},
+		{desc: "invalid_phone_number_2", input: "+1 (123) 456-7890", want: "", err: user.ErrPhoneInvalid},
+		{desc: "invalid_phone_number_3", input: "0812345678a", want: "", err: user.ErrPhoneInvalid},
 	}
 
 	for _, tc := range testCases {
