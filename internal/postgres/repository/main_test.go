@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	testDB, err = postgres.NewDB(ctx, connURI)
+	testDB, err = postgres.Connect(ctx, connURI)
 	if err != nil {
 		panic(err)
 	}
@@ -46,6 +46,7 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+// setupPostgresContainer sets up a postgres test container for testing
 func setupPostgresContainer(ctx context.Context) (*pgtestcontainer.PostgresContainer, error) {
 	dbName := "sea_salon"
 	dbUser := "postgres"
@@ -68,6 +69,7 @@ func setupPostgresContainer(ctx context.Context) (*pgtestcontainer.PostgresConta
 	return postgresContainer, nil
 }
 
+// terminatePostgresContainer deletes the postgres test container after testing
 func terminatePostgresContainer(ctx context.Context, container *pgtestcontainer.PostgresContainer) {
 	if err := container.Terminate(ctx); err != nil {
 		panic(err)

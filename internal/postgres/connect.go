@@ -14,8 +14,8 @@ type DB struct {
 	*pgxpool.Pool
 }
 
-// NewDB creates a new DB instance using the provided config.
-func NewDB(ctx context.Context, connURI string) (*DB, error) {
+// Connect creates a new DB instance using the provided config.
+func Connect(ctx context.Context, connURI string) (*DB, error) {
 	pool, err := pgxpool.New(ctx, connURI)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,6 @@ func (d *DB) ExecTX(ctx context.Context, fn func(Querier) error) error {
 		if rbErr := tx.Rollback(ctx); rbErr != nil {
 			return rbErr
 		}
-
 		return err
 	}
 

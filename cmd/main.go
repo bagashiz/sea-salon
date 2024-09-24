@@ -39,7 +39,7 @@ func run(ctx context.Context, getEnv func(string) string) error {
 		return err
 	}
 
-	db, err := postgres.NewDB(ctx, config.DB.URI)
+	db, err := postgres.Connect(ctx, config.DB.URI)
 	if err != nil {
 		return err
 	}
