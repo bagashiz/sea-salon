@@ -14,22 +14,22 @@ func TestNewEmail(t *testing.T) {
 		input string
 		want  user.Email
 	}{
-		{desc: "valid email", input: "test@example.com", want: user.Email("test@example.com"), err: nil},
-		{desc: "valid email", input: "test+go-salon@example.com", want: user.Email("test+go-salon@example.com"), err: nil},
-		{desc: "no input", input: "", want: user.Email(""), err: user.ErrEmailEmpty},
-		{desc: "exceeds max length", input: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com", want: user.Email(""), err: user.ErrEmailExceedsMaxLength},
-		{desc: "contains whitespace", input: "test @example.com", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "contains whitespace", input: "test@example.com\t", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "contains whitespace", input: "\rtest@example.com ", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "contains quotes", input: "test\"@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "contains quotes", input: "\"test@example.com\"", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "contains quotes", input: "'test@example.com'", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid characters", input: "te#st@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid characters", input: "test!@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid characters", input: "te=st@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid format", input: "test@", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid format", input: "@example", want: user.Email(""), err: user.ErrEmailInvalid},
-		{desc: "invalid format", input: "test@example", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "valid_email_0", input: "test@example.com", want: user.Email("test@example.com"), err: nil},
+		{desc: "valid_email_1", input: "test+go-salon@example.com", want: user.Email("test+go-salon@example.com"), err: nil},
+		{desc: "no_input", input: "", want: user.Email(""), err: user.ErrEmailEmpty},
+		{desc: "exceeds_max_length", input: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com", want: user.Email(""), err: user.ErrEmailExceedsMaxLength},
+		{desc: "contains_whitespace_0", input: "test @example.com", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "contains_whitespace_1", input: "test@example.com\t", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "contains_whitespace_3", input: "\rtest@example.com ", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "contains_quotes_0", input: "test\"@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "contains_quotes_1", input: "\"test@example.com\"", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "contains_quotes_2", input: "'test@example.com'", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_characters_0", input: "te#st@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_characters_1", input: "test!@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_characters_2", input: "te=st@example.com", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_format_0", input: "test@", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_format_1", input: "@example", want: user.Email(""), err: user.ErrEmailInvalid},
+		{desc: "invalid_format_2", input: "test@example", want: user.Email(""), err: user.ErrEmailInvalid},
 	}
 
 	for _, tc := range testCases {

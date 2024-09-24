@@ -4,9 +4,12 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
-	"github.com/bagashiz/sea-salon/internal/config"
 	"github.com/bagashiz/sea-salon/internal/postgres"
+	"github.com/testcontainers/testcontainers-go"
+	pgtestcontainer "github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 // testDB is a db connection instance for testing
@@ -16,38 +19,23 @@ var testDB *postgres.DB
 func TestMain(m *testing.M) {
 	ctx := context.Background()
 
-	getEnv := func(key string) string {
-		switch key {
-		case "APP_ENV":
-			return "test"
-		case "DB_TYPE":
-			return "postgres"
-		case "DB_HOST":
-			return "localhost"
-		case "DB_PORT":
-			return "5432"
-		case "DB_USER":
-			return "postgres"
-		case "DB_PASSWORD":
-			return "password"
-		case "DB_NAME":
-			return "sea_salon"
-		default:
-			return ""
-		}
+	postgresContainer, err := setupPostgresContainer(ctx)
+	if err != nil {
+		panic(err)
 	}
+	defer terminatePostgresContainer(ctx, postgresContainer)
 
-	config, err := config.New(getEnv)
+	connURI, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
 
-	testDB, err = postgres.NewDB(ctx, config.DB)
+	testDB, err = postgres.Connect(ctx, connURI)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := testDB.Migrate(config.DB.Type); err != nil {
+	if err := testDB.Migrate(); err != nil {
 		panic(err)
 	}
 
@@ -56,4 +44,34 @@ func TestMain(m *testing.M) {
 	testDB.Close()
 
 	os.Exit(exitCode)
+}
+
+// setupPostgresContainer sets up a postgres test container for testing
+func setupPostgresContainer(ctx context.Context) (*pgtestcontainer.PostgresContainer, error) {
+	dbName := "sea_salon"
+	dbUser := "postgres"
+	dbPassword := "password"
+
+	postgresContainer, err := pgtestcontainer.Run(ctx,
+		"docker.io/postgres:16-alpine",
+		pgtestcontainer.WithDatabase(dbName),
+		pgtestcontainer.WithUsername(dbUser),
+		pgtestcontainer.WithPassword(dbPassword),
+		testcontainers.WithWaitStrategy(
+			wait.ForLog("database system is ready to accept connections").
+				WithOccurrence(2).
+				WithStartupTimeout(5*time.Second)),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return postgresContainer, nil
+}
+
+// terminatePostgresContainer deletes the postgres test container after testing
+func terminatePostgresContainer(ctx context.Context, container *pgtestcontainer.PostgresContainer) {
+	if err := container.Terminate(ctx); err != nil {
+		panic(err)
+	}
 }

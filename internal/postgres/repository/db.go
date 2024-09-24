@@ -1,21 +1,15 @@
 package repository
 
 import (
-	"context"
-
 	"github.com/bagashiz/sea-salon/internal/postgres"
 )
 
-// DB is an interface that wraps the Querier interface and the ExecTX method for executing transactions.
-type DB interface {
-	postgres.Querier
-	ExecTX(ctx context.Context, fn func(postgres.Querier) error) error
-}
-
+// PostgresRepository is a repository that holds the database connection.
 type PostgresRepository struct {
-	db DB
+	db *postgres.DB
 }
 
-func New(db DB) *PostgresRepository {
+// New creates a new PostgresRepository instance.
+func New(db *postgres.DB) *PostgresRepository {
 	return &PostgresRepository{db: db}
 }

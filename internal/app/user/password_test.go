@@ -16,15 +16,15 @@ func TestPassword(t *testing.T) {
 		wrongHash user.Password
 		isMatch   bool
 	}{
-		{desc: "valid password", input: "test1234", wrongHash: "", isMatch: true, err: nil},
-		{desc: "valid password", input: "#tes+t1@-4e2=34$", wrongHash: "", isMatch: true, err: nil},
-		{desc: "valid password", input: "$2a$10$4tS9MQtS6l/9PWY.MiR8O.3.yFKHvaB34kpQVGgSVnGrla6ztOaam", wrongHash: "", isMatch: true, err: nil},
-		{desc: "empty password", input: "", wrongHash: "", isMatch: true, err: user.ErrPasswordEmpty},
-		{desc: "password too short", input: "test", wrongHash: "", isMatch: true, err: user.ErrPasswordTooShort},
-		{desc: "password too long", input: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", wrongHash: "", isMatch: true, err: user.ErrPasswordTooLong},
-		{desc: "invalid password", input: "test\t1234", wrongHash: "", isMatch: true, err: user.ErrPasswordInvalid},
-		{desc: "invalid password", input: " test1234 ", wrongHash: "", isMatch: true, err: user.ErrPasswordInvalid},
-		{desc: "different password", input: "test1234", wrongHash: "$2a$10$4tS9MQtS6l/9PWY.MiR8O.3.yFKHvaB34kpQVGgSVnGrla6ztOaam", isMatch: false, err: nil},
+		{desc: "valid_password_0", input: "test1234", wrongHash: "", isMatch: true, err: nil},
+		{desc: "valid_password_1", input: "#tes+t1@-4e2=34$", wrongHash: "", isMatch: true, err: nil},
+		{desc: "valid_password_2", input: "$2a$10$4tS9MQtS6l/9PWY.MiR8O.3.yFKHvaB34kpQVGgSVnGrla6ztOaam", wrongHash: "", isMatch: true, err: nil},
+		{desc: "empty_password", input: "", wrongHash: "", isMatch: true, err: user.ErrPasswordEmpty},
+		{desc: "password_too_short", input: "test", wrongHash: "", isMatch: true, err: user.ErrPasswordTooShort},
+		{desc: "password_too_long", input: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", wrongHash: "", isMatch: true, err: user.ErrPasswordTooLong},
+		{desc: "invalid_password_0", input: "test\t1234", wrongHash: "", isMatch: true, err: user.ErrPasswordInvalid},
+		{desc: "invalid_password_1", input: " test1234 ", wrongHash: "", isMatch: true, err: user.ErrPasswordInvalid},
+		{desc: "different_password", input: "test1234", wrongHash: "$2a$10$4tS9MQtS6l/9PWY.MiR8O.3.yFKHvaB34kpQVGgSVnGrla6ztOaam", isMatch: false, err: nil},
 	}
 
 	for _, tc := range testCases {

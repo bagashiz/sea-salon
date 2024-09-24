@@ -2,9 +2,7 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/bagashiz/sea-salon/internal/config"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
@@ -16,14 +14,9 @@ type DB struct {
 	*pgxpool.Pool
 }
 
-// NewDB creates a new DB instance using the provided config.
-func NewDB(ctx context.Context, cfg *config.DB) (*DB, error) {
-	dsn := fmt.Sprintf(
-		"%s://%s:%s@%s:%s/%s?sslmode=disable",
-		cfg.Type, cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name,
-	)
-
-	pool, err := pgxpool.New(ctx, dsn)
+// Connect creates a new DB instance using the provided config.
+func Connect(ctx context.Context, connURI string) (*DB, error) {
+	pool, err := pgxpool.New(ctx, connURI)
 	if err != nil {
 		return nil, err
 	}
@@ -36,10 +29,10 @@ func NewDB(ctx context.Context, cfg *config.DB) (*DB, error) {
 }
 
 // Migrate runs the goose migration tool to apply new migrations.
-func (d *DB) Migrate(dialect string) error {
+func (d *DB) Migrate() error {
 	goose.SetBaseFS(migrationFS)
 
-	if err := goose.SetDialect(dialect); err != nil {
+	if err := goose.SetDialect("postgres"); err != nil {
 		return err
 	}
 
@@ -55,7 +48,7 @@ func (d *DB) Migrate(dialect string) error {
 
 // ExecTX wraps the provided function in a transaction and executes it.
 func (d *DB) ExecTX(ctx context.Context, fn func(Querier) error) error {
-	tx, err := d.Pool.Begin(ctx)
+	tx, err := d.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -64,7 +57,6 @@ func (d *DB) ExecTX(ctx context.Context, fn func(Querier) error) error {
 		if rbErr := tx.Rollback(ctx); rbErr != nil {
 			return rbErr
 		}
-
 		return err
 	}
 

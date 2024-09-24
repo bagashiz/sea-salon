@@ -49,10 +49,10 @@ func TestCreateUser(t *testing.T) {
 		user *user.User
 		desc string
 	}{
-		{desc: "valid user", user: u, err: nil},
-		{desc: "invalid user", user: &user.User{}, err: user.ErrUserInvalid},
-		{desc: "invalid role", user: &user.User{Role: "invalidrole"}, err: user.ErrUserInvalid},
-		{desc: "duplicate user", user: u, err: user.ErrUserExists},
+		{desc: "valid_user", user: u, err: nil},
+		{desc: "invalid_user", user: &user.User{}, err: user.ErrUserInvalid},
+		{desc: "invalid_role", user: &user.User{Role: "invalidrole"}, err: user.ErrUserInvalid},
+		{desc: "duplicate_user", user: u, err: user.ErrUserExists},
 	}
 
 	for _, tc := range testCases {
@@ -82,9 +82,9 @@ func TestGetUserByID(t *testing.T) {
 		desc string
 		id   string
 	}{
-		{desc: "existing user ID", id: want.ID.String(), err: nil},
-		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
-		{desc: "non-existing user ID", id: uuid.NewString(), err: user.ErrUserNotFound},
+		{desc: "existing_user_ID", id: want.ID.String(), err: nil},
+		{desc: "invalid_user_ID", id: "invaliduuid", err: user.ErrIDInvalid},
+		{desc: "non-existing_user_ID", id: uuid.NewString(), err: user.ErrUserNotFound},
 	}
 
 	for _, tc := range testCases {
@@ -120,8 +120,8 @@ func TestGetUserByEmail(t *testing.T) {
 		desc  string
 		email string
 	}{
-		{desc: "existing email", email: want.Email, err: nil},
-		{desc: "non-existing email", email: "notexists@email.com", err: user.ErrUserNotFound},
+		{desc: "existing_email", email: want.Email, err: nil},
+		{desc: "non-existing_email", email: "notexists@email.com", err: user.ErrUserNotFound},
 	}
 
 	for _, tc := range testCases {
@@ -205,15 +205,15 @@ func TestUpdateUser(t *testing.T) {
 		user *user.User
 		desc string
 	}{
-		{desc: "valid user", user: dummy1, err: nil},
-		{desc: "update email", user: &user.User{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
-		{desc: "update full name", user: &user.User{ID: dummy1.ID, FullName: testutil.RandomFullName()}, err: nil},
-		{desc: "update phone number", user: &user.User{ID: dummy1.ID, PhoneNumber: testutil.RandomPhoneNumber()}, err: nil},
-		{desc: "update role", user: &user.User{ID: dummy1.ID, Role: "admin"}, err: nil},
-		{desc: "invalid user", user: &user.User{}, err: user.ErrUserNotFound},
-		{desc: "non-existing user", user: &user.User{ID: uuid.New()}, err: user.ErrUserNotFound},
-		{desc: "duplicate email", user: &user.User{ID: dummy1.ID, Email: dummy2.Email}, err: user.ErrUserExists},
-		{desc: "invalid role", user: &user.User{ID: dummy1.ID, Role: "invalidrole"}, err: user.ErrUserInvalid},
+		{desc: "valid_user", user: dummy1, err: nil},
+		{desc: "update_email", user: &user.User{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
+		{desc: "update_full_name", user: &user.User{ID: dummy1.ID, FullName: testutil.RandomFullName()}, err: nil},
+		{desc: "update_phone_number", user: &user.User{ID: dummy1.ID, PhoneNumber: testutil.RandomPhoneNumber()}, err: nil},
+		{desc: "update_role", user: &user.User{ID: dummy1.ID, Role: "admin"}, err: nil},
+		{desc: "invalid_user", user: &user.User{}, err: user.ErrUserNotFound},
+		{desc: "non-existing_user", user: &user.User{ID: uuid.New()}, err: user.ErrUserNotFound},
+		{desc: "duplicate_email", user: &user.User{ID: dummy1.ID, Email: dummy2.Email}, err: user.ErrUserExists},
+		{desc: "invalid_role", user: &user.User{ID: dummy1.ID, Role: "invalidrole"}, err: user.ErrUserInvalid},
 	}
 
 	for _, tc := range testCases {
@@ -243,9 +243,9 @@ func TestDeleteUser(t *testing.T) {
 		desc string
 		id   string
 	}{
-		{desc: "existing user ID", id: want.ID.String(), err: nil},
-		{desc: "invalid user ID", id: "invaliduuid", err: user.ErrIDInvalid},
-		{desc: "non-existing user ID", id: uuid.NewString(), err: user.ErrUserNotFound},
+		{desc: "existing_user_ID", id: want.ID.String(), err: nil},
+		{desc: "invalid_user_ID", id: "invaliduuid", err: user.ErrIDInvalid},
+		{desc: "non-existing_user_ID", id: uuid.NewString(), err: user.ErrUserNotFound},
 	}
 
 	for _, tc := range testCases {
