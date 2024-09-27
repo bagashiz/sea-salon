@@ -2,16 +2,16 @@ package postgres
 
 import "github.com/bagashiz/sea-salon/internal/app/user"
 
-// ToDomain converts generated User struct to domain user struct
-func (u User) ToDomain() *user.User {
-	return &user.User{
-		ID:          u.ID,
-		FullName:    u.FullName,
-		Email:       u.Email,
-		Password:    u.Password,
-		PhoneNumber: u.PhoneNumber,
-		Role:        string(u.Role),
-		CreatedAt:   u.CreatedAt.Time,
-		UpdatedAt:   u.UpdatedAt.Time,
+// ToDomain converts generated Account struct to domain account struct
+func (a Account) ToDomain() *user.Account {
+	return &user.Account{
+		ID:          a.ID,
+		FullName:    a.FullName,
+		Email:       a.Email,
+		Password:    a.Password,
+		PhoneNumber: a.PhoneNumber,
+		Role:        string(a.Role),
+		CreatedAt:   a.CreatedAt.Time,
+		UpdatedAt:   a.UpdatedAt.Time,
 	}
 }

@@ -11,53 +11,30 @@ import (
 	"github.com/google/uuid"
 )
 
-// createUser creates a new user with random data.
-func createUser() *user.User {
-	fullName := testutil.RandomFullName()
-	phoneNumber := testutil.RandomPhoneNumber()
-	role := "customer"
-	email := testutil.RandomEmail()
-	password, err := user.NewPassword(testutil.RandomAlphaNumeric(8))
-	if err != nil {
-		return nil
-	}
-
-	hashedPassword, err := password.Hash()
-	if err != nil {
-		return nil
-	}
-
-	u := &user.User{
-		Email:       email,
-		Password:    hashedPassword.String(),
-		FullName:    fullName,
-		PhoneNumber: phoneNumber,
-		Role:        role,
-	}
-	u.Create()
-
-	return u
-}
-
-func TestCreateUser(t *testing.T) {
+// TestAddAccount tests the AddAccount method.
+func TestAddAccount(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
-	u := createUser()
+	account, err := createAccount()
+	if err != nil {
+		t.Errorf("[createAccount] error: %q", err)
+		return
+	}
 
 	testCases := []struct {
-		err  error
-		user *user.User
-		desc string
+		err     error
+		account *user.Account
+		desc    string
 	}{
-		{desc: "valid_user", user: u, err: nil},
-		{desc: "invalid_user", user: &user.User{}, err: user.ErrUserInvalid},
-		{desc: "invalid_role", user: &user.User{Role: "invalidrole"}, err: user.ErrUserInvalid},
-		{desc: "duplicate_user", user: u, err: user.ErrUserExists},
+		{desc: "valid_account", account: account, err: nil},
+		{desc: "invalid_account", account: &user.Account{}, err: user.ErrAccountInvalid},
+		{desc: "invalid_role", account: &user.Account{Role: "invalidrole"}, err: user.ErrAccountInvalid},
+		{desc: "duplicate_account", account: account, err: user.ErrAccountExists},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			err := repo.CreateUser(ctx, tc.user)
+			err := repo.AddAccount(ctx, tc.account)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
@@ -66,30 +43,28 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
-func TestGetUserByID(t *testing.T) {
+// TestGetAccountByID tests the GetAccountByID method.
+func TestGetAccountByID(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
 
-	want := createUser()
-	err := repo.CreateUser(ctx, want)
+	want, err := addDummyAccount(ctx, repo)
 	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+		t.Errorf("[addDummyAccount] error: %q", err)
 	}
 
 	testCases := []struct {
 		err  error
 		desc string
-		id   string
+		id   uuid.UUID
 	}{
-		{desc: "existing_user_ID", id: want.ID.String(), err: nil},
-		{desc: "invalid_user_ID", id: "invaliduuid", err: user.ErrIDInvalid},
-		{desc: "non-existing_user_ID", id: uuid.NewString(), err: user.ErrUserNotFound},
+		{desc: "existing_account_ID", id: want.ID, err: nil},
+		{desc: "non-existing_account_ID", id: uuid.New(), err: user.ErrAccountNotFound},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			got, err := repo.GetUserByID(ctx, tc.id)
+			got, err := repo.GetAccountByID(ctx, tc.id)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
@@ -104,15 +79,14 @@ func TestGetUserByID(t *testing.T) {
 	}
 }
 
-func TestGetUserByEmail(t *testing.T) {
+// TestGetAccountByEmail tests the GetAccountByEmail method.
+func TestGetAccountByEmail(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
 
-	want := createUser()
-	err := repo.CreateUser(ctx, want)
+	want, err := addDummyAccount(ctx, repo)
 	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+		t.Errorf("[addDummyAccount] error: %q", err)
 	}
 
 	testCases := []struct {
@@ -121,12 +95,12 @@ func TestGetUserByEmail(t *testing.T) {
 		email string
 	}{
 		{desc: "existing_email", email: want.Email, err: nil},
-		{desc: "non-existing_email", email: "notexists@email.com", err: user.ErrUserNotFound},
+		{desc: "non-existing_email", email: "notexists@email.com", err: user.ErrAccountNotFound},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			got, err := repo.GetUserByEmail(ctx, tc.email)
+			got, err := repo.GetAccountByEmail(ctx, tc.email)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
@@ -141,12 +115,13 @@ func TestGetUserByEmail(t *testing.T) {
 	}
 }
 
-func TestListUsers(t *testing.T) {
+// TestListAccounts tests the ListAccounts method.
+func TestListAccounts(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
 
-	if _, err := testDB.Exec(ctx, "DELETE FROM users"); err != nil {
-		t.Errorf("[ListUsers] error: %q", err)
+	if _, err := testDB.Exec(ctx, "DELETE FROM accounts"); err != nil {
+		t.Errorf("[ListAccounts] error: %q", err)
 		return
 	}
 
@@ -159,66 +134,61 @@ func TestListUsers(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			u := createUser()
-			err := repo.CreateUser(ctx, u)
+			_, err := addDummyAccount(ctx, repo)
 			if err != nil {
-				t.Errorf("[CreateUser] error: %q", err)
-				return
+				t.Errorf("[addDummyAccount] error: %q", err)
 			}
 		}()
 	}
 
 	wg.Wait()
 
-	got, err := repo.ListUsers(ctx, limit, offset)
+	got, err := repo.ListAccounts(ctx, limit, offset)
 	if err != nil {
-		t.Errorf("[ListUsers] error: %q", err)
+		t.Errorf("[ListAccounts] error: %q", err)
 		return
 	}
 
 	if len(got) != limit {
-		t.Errorf("expected %d users, got %d", limit, len(got))
+		t.Errorf("expected %d accounts, got %d", limit, len(got))
 		return
 	}
 }
 
-func TestUpdateUser(t *testing.T) {
+// TestUpdateAccount tests the UpdateAccount method.
+func TestUpdateAccount(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
 
-	dummy1 := createUser()
-	err := repo.CreateUser(ctx, dummy1)
+	dummy1, err := addDummyAccount(ctx, repo)
 	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+		t.Errorf("[addDummyAccount] error: %q", err)
 	}
 
-	dummy2 := createUser()
-	err = repo.CreateUser(ctx, dummy2)
+	dummy2, err := addDummyAccount(ctx, repo)
 	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+		t.Errorf("[addDummyAccount] error: %q", err)
 	}
 
 	testCases := []struct {
-		err  error
-		user *user.User
-		desc string
+		err     error
+		account *user.Account
+		desc    string
 	}{
-		{desc: "valid_user", user: dummy1, err: nil},
-		{desc: "update_email", user: &user.User{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
-		{desc: "update_full_name", user: &user.User{ID: dummy1.ID, FullName: testutil.RandomFullName()}, err: nil},
-		{desc: "update_phone_number", user: &user.User{ID: dummy1.ID, PhoneNumber: testutil.RandomPhoneNumber()}, err: nil},
-		{desc: "update_role", user: &user.User{ID: dummy1.ID, Role: "admin"}, err: nil},
-		{desc: "invalid_user", user: &user.User{}, err: user.ErrUserNotFound},
-		{desc: "non-existing_user", user: &user.User{ID: uuid.New()}, err: user.ErrUserNotFound},
-		{desc: "duplicate_email", user: &user.User{ID: dummy1.ID, Email: dummy2.Email}, err: user.ErrUserExists},
-		{desc: "invalid_role", user: &user.User{ID: dummy1.ID, Role: "invalidrole"}, err: user.ErrUserInvalid},
+		{desc: "valid_account", account: dummy1, err: nil},
+		{desc: "update_email", account: &user.Account{ID: dummy1.ID, Email: testutil.RandomEmail()}, err: nil},
+		{desc: "update_full_name", account: &user.Account{ID: dummy1.ID, FullName: testutil.RandomFullName()}, err: nil},
+		{desc: "update_phone_number", account: &user.Account{ID: dummy1.ID, PhoneNumber: testutil.RandomPhoneNumber()}, err: nil},
+		{desc: "update_role", account: &user.Account{ID: dummy1.ID, Role: "admin"}, err: nil},
+		{desc: "invalid_account", account: &user.Account{}, err: user.ErrAccountNotFound},
+		{desc: "non-existing_account", account: &user.Account{ID: uuid.New()}, err: user.ErrAccountNotFound},
+		{desc: "duplicate_email", account: &user.Account{ID: dummy1.ID, Email: dummy2.Email}, err: user.ErrAccountExists},
+		{desc: "invalid_role", account: &user.Account{ID: dummy1.ID, Role: "invalidrole"}, err: user.ErrAccountInvalid},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			err := repo.UpdateUser(ctx, tc.user)
+			err := repo.UpdateAccount(ctx, tc.account)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
@@ -227,34 +197,82 @@ func TestUpdateUser(t *testing.T) {
 	}
 }
 
-func TestDeleteUser(t *testing.T) {
+// TestDeleteAccount tests the DeleteAccount method.
+func TestDeleteAccount(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.New(testDB)
 
-	want := createUser()
-	err := repo.CreateUser(ctx, want)
+	want, err := addDummyAccount(ctx, repo)
 	if err != nil {
-		t.Errorf("[CreateUser] error: %q", err)
-		return
+		t.Errorf("[addDummyAccount] error: %q", err)
 	}
 
 	testCases := []struct {
 		err  error
 		desc string
-		id   string
+		id   uuid.UUID
 	}{
-		{desc: "existing_user_ID", id: want.ID.String(), err: nil},
-		{desc: "invalid_user_ID", id: "invaliduuid", err: user.ErrIDInvalid},
-		{desc: "non-existing_user_ID", id: uuid.NewString(), err: user.ErrUserNotFound},
+		{desc: "existing_account_ID", id: want.ID, err: nil},
+		{desc: "non-existing_account_ID", id: uuid.New(), err: user.ErrAccountNotFound},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			err := repo.DeleteUser(ctx, tc.id)
+			err := repo.DeleteAccount(ctx, tc.id)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
 			}
 		})
 	}
+}
+
+// createAccount creates a new user account struct with random values.
+func createAccount() (*user.Account, error) {
+	fullName, err := user.NewFullName(testutil.RandomFullName())
+	if err != nil {
+		return nil, err
+	}
+
+	phoneNumber, err := user.NewPhoneNumber(testutil.RandomPhoneNumber())
+	if err != nil {
+		return nil, err
+	}
+
+	role, err := user.NewAccountRole("Customer")
+	if err != nil {
+		return nil, err
+	}
+
+	email, err := user.NewEmail(testutil.RandomEmail())
+	if err != nil {
+		return nil, err
+	}
+
+	password, err := user.NewPassword(testutil.RandomAlphaNumeric(8))
+	if err != nil {
+		return nil, err
+	}
+
+	hashedPassword, err := password.Hash()
+	if err != nil {
+		return nil, err
+	}
+
+	account := user.NewAccount(fullName, phoneNumber, email, hashedPassword, role)
+
+	return account, nil
+}
+
+// addDummyAccount inserts a dummy user account data to the database.
+func addDummyAccount(ctx context.Context, repo *repository.PostgresRepository) (*user.Account, error) {
+	want, err := createAccount()
+	if err != nil {
+		return nil, err
+	}
+	err = repo.AddAccount(ctx, want)
+	if err != nil {
+		return nil, err
+	}
+	return want, nil
 }

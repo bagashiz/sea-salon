@@ -7,13 +7,11 @@ import (
 
 type PhoneNumber string
 
-var (
-	// validPhoneSeq is a regular expression that matches a valid phone number.
-	validPhoneSeq = regexp.MustCompile(`^[0-9]+$`)
-)
+// validPhoneSeq is a regular expression that matches a valid phone number.
+var validPhoneSeq = regexp.MustCompile(`^[0-9]+$`)
 
-// NewPhone validates and creates a new phone number.
-func NewPhone(number string) (PhoneNumber, error) {
+// NewPhoneNumber validates and creates a new phone number.
+func NewPhoneNumber(number string) (PhoneNumber, error) {
 	if strings.TrimSpace(number) == "" {
 		return "", ErrPhoneEmpty
 	}

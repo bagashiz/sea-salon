@@ -1,5 +1,5 @@
--- name: InsertUser :exec
-INSERT INTO users (
+-- name: InsertAccount :exec
+INSERT INTO accounts (
     id,
     email,
     password,
@@ -11,24 +11,24 @@ INSERT INTO users (
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 
--- name: SelectUserByID :one
-SELECT * FROM users
+-- name: SelectAccountByID :one
+SELECT * FROM accounts
 WHERE id = $1
 LIMIT 1;
 
--- name: SelectUserByEmail :one
-SELECT * FROM users
+-- name: SelectAccountByEmail :one
+SELECT * FROM accounts
 WHERE email = $1
 LIMIT 1;
 
--- name: SelectAllUsers :many
-SELECT * FROM users
+-- name: SelectAllAccounts :many
+SELECT * FROM accounts
 ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: UpdateUser :one
-UPDATE users
+-- name: UpdateAccount :one
+UPDATE accounts
 SET
     email = COALESCE(sqlc.narg(email), email),
     password = COALESCE(sqlc.narg(password), password),
@@ -39,7 +39,7 @@ SET
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteUser :one
-DELETE FROM users
+-- name: DeleteAccount :one
+DELETE FROM accounts
 WHERE id = $1
 RETURNING id;
