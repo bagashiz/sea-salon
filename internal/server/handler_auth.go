@@ -50,7 +50,7 @@ func login(sessionManager *scs.SessionManager, userService *user.Service) handle
 			return err
 		}
 
-		currentUser, err := userService.GetUserByEmail(
+		current, err := userService.GetAccountByEmail(
 			r.Context(),
 			formValues["email"],
 			formValues["password"],
@@ -63,7 +63,7 @@ func login(sessionManager *scs.SessionManager, userService *user.Service) handle
 				RenderTempl(r.Context(), w, template.LoginForm(false, err))
 		}
 
-		sessionManager.Put(r.Context(), "user_id", currentUser.ID.String())
+		sessionManager.Put(r.Context(), "account_id", current.ID.String())
 
 		return htmx.NewResponse().
 			StatusCode(http.StatusOK).
