@@ -1,8 +1,8 @@
 -- +goose Up
-CREATE TYPE user_role AS ENUM ('admin', 'customer');
-CREATE TABLE IF NOT EXISTS users (
+CREATE TYPE account_role AS ENUM ('admin', 'customer');
+CREATE TABLE IF NOT EXISTS accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    role user_role NOT NULL DEFAULT 'customer',
+    role account_role NOT NULL DEFAULT 'customer',
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()   
 );
-INSERT INTO users (
+INSERT INTO accounts (
     role,
     email,
     password,
@@ -25,5 +25,5 @@ INSERT INTO users (
 );
 
 -- +goose Down
-DROP TABLE IF EXISTS users;
-DROP TYPE IF EXISTS user_role;
+DROP TABLE IF EXISTS accounts;
+DROP TYPE IF EXISTS accounts_role;

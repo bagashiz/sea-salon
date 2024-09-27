@@ -48,12 +48,13 @@ func TestMain(m *testing.M) {
 
 // setupPostgresContainer sets up a postgres test container for testing
 func setupPostgresContainer(ctx context.Context) (*pgtestcontainer.PostgresContainer, error) {
+	dbImage := "docker.io/postgres:16-alpine"
 	dbName := "sea_salon"
 	dbUser := "postgres"
 	dbPassword := "password"
 
 	postgresContainer, err := pgtestcontainer.Run(ctx,
-		"docker.io/postgres:16-alpine",
+		dbImage,
 		pgtestcontainer.WithDatabase(dbName),
 		pgtestcontainer.WithUsername(dbUser),
 		pgtestcontainer.WithPassword(dbPassword),
