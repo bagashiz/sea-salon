@@ -1,22 +1,26 @@
 package user
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 // Reader is the interface that provides methods to read user data from the storage.
 type Reader interface {
-	GetUserByID(ctx context.Context, id string) (*User, error)
-	GetUserByEmail(ctx context.Context, email string) (*User, error)
-	ListUsers(ctx context.Context, limit, offset int) ([]*User, error)
+	GetAccountByID(ctx context.Context, id uuid.UUID) (*Account, error)
+	GetAccountByEmail(ctx context.Context, email string) (*Account, error)
+	ListAccounts(ctx context.Context, limit, offset int) ([]*Account, error)
 }
 
 // Writer is the interface that provides methods to write user data to the storage.
 type Writer interface {
-	CreateUser(ctx context.Context, u *User) error
-	UpdateUser(ctx context.Context, u *User) error
-	DeleteUser(ctx context.Context, id string) error
+	AddAccount(ctx context.Context, u *Account) error
+	UpdateAccount(ctx context.Context, u *Account) error
+	DeleteAccount(ctx context.Context, id uuid.UUID) error
 }
 
-// ReadWriter is the interface that combines Reader and Writer interfaces.
+// ReadWriter is the interface that combines Reader and Writer interfaces for user data.
 type ReadWriter interface {
 	Reader
 	Writer

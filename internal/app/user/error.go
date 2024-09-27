@@ -7,7 +7,7 @@ import (
 
 var (
 	// list of errors for full name validation
-	ErrFullNameEmpty = errors.New("name cannot be empty")
+	ErrFullNameEmpty = errors.New("full name cannot be empty")
 	// list of errors for email validation
 	ErrEmailEmpty            = errors.New("email cannot be empty")
 	ErrEmailExceedsMaxLength = fmt.Errorf("email cannot exceed %d characters", emailMaxLength)
@@ -22,11 +22,9 @@ var (
 	ErrPhoneEmpty   = errors.New("phone number cannot be empty")
 	ErrPhoneInvalid = errors.New("phone number must contain only numbers")
 	// list of errors for role validation
-	ErrRoleInvalid = errors.New("user role must be either \"admin\" or \"customer\"")
-	// list of errors for user validation
-	ErrIDInvalid = errors.New("user ID must be a valid UUIDv4")
+	ErrRoleInvalid = errors.New("account role must be either \"admin\" or \"customer\"")
 	// list of errors for user repository
-	ErrUserInvalid  = errors.New("user data is invalid")
-	ErrUserExists   = errors.New("user already exists")
-	ErrUserNotFound = errors.New("user not found")
+	ErrAccountInvalid  = errors.New("account data is invalid")
+	ErrAccountExists   = errors.New("account already exists")
+	ErrAccountNotFound = errors.New("account not found")
 )

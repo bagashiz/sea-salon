@@ -1,13 +1,12 @@
 package user_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/bagashiz/sea-salon/internal/app/user"
 )
 
-// TestPassword tests the NewPassword and Compare methods of the Password type.
+// TestPassword tests the NewPassword, Hash, and Compare functions.
 func TestPassword(t *testing.T) {
 	testCases := []struct {
 		err       error
@@ -46,9 +45,6 @@ func TestPassword(t *testing.T) {
 			if tc.wrongHash != "" {
 				hashedPassword = tc.wrongHash
 			}
-
-			fmt.Println(hashedPassword)
-			fmt.Println(tc.wrongHash)
 
 			if password.Compare(hashedPassword.String()) != tc.isMatch {
 				t.Errorf("[case: %s] password does not match the hash", tc.desc)

@@ -6,7 +6,8 @@ import (
 	"github.com/bagashiz/sea-salon/internal/app/user"
 )
 
-func TestNewPhone(t *testing.T) {
+// TestNewPhoneNumber tests the NewPhoneNumber function.
+func TestNewPhoneNumber(t *testing.T) {
 	testCases := []struct {
 		err   error
 		desc  string
@@ -26,7 +27,7 @@ func TestNewPhone(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
-			got, err := user.NewPhone(tc.input)
+			got, err := user.NewPhoneNumber(tc.input)
 			if err != tc.err {
 				t.Errorf("[case: %s] want %q, got %q", tc.desc, tc.err, err)
 				return
