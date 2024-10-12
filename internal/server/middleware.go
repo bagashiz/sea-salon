@@ -45,30 +45,46 @@ func handle(h handlerFunc) http.Handler {
 
 		if err := h(writer, r); err != nil {
 			statusCode := http.StatusInternalServerError
-			message := http.StatusText(statusCode)
+			errMsg := http.StatusText(statusCode)
 
 			if err, ok := err.(handlerError); ok {
 				statusCode = err.statusCode
-				message = err.Error()
+				errMsg = err.Error()
 			}
 
-			http.Error(writer, message, statusCode)
-
-			slog.Error("request failed",
-				slog.Int("status", statusCode),
-				slog.String("error", message),
-				slog.String("method", r.Method),
-				slog.String("url", r.URL.Path),
-				slog.Duration("duration", time.Since(start)),
-			)
+			http.Error(writer, errMsg, statusCode)
+			logRequest(r, statusCode, time.Since(start), errMsg)
 			return
 		}
 
-		slog.Info("request served",
-			slog.Int("status", writer.statusCode),
+		logRequest(r, writer.statusCode, time.Since(start), "")
+	})
+}
+
+// logRequest logs request information based on the status code and error message.
+func logRequest(r *http.Request, statusCode int, duration time.Duration, errMsg string) {
+	switch {
+	case statusCode < 400:
+		slog.Info("success",
+			slog.Int("status", statusCode),
 			slog.String("method", r.Method),
 			slog.String("url", r.URL.Path),
-			slog.Duration("duration", time.Since(start)),
+			slog.Duration("duration", duration),
 		)
-	})
+	case statusCode >= 400 && statusCode < 500:
+		slog.Warn("client error",
+			slog.Int("status", statusCode),
+			slog.String("method", r.Method),
+			slog.String("url", r.URL.Path),
+			slog.Duration("duration", duration),
+		)
+	case statusCode >= 500 || errMsg != "":
+		slog.Error("server error",
+			slog.Int("status", statusCode),
+			slog.String("error", errMsg),
+			slog.String("method", r.Method),
+			slog.String("url", r.URL.Path),
+			slog.Duration("duration", duration),
+		)
+	}
 }
