@@ -27,12 +27,12 @@ func NewAccount(
 	accountRole AccountRole,
 ) *Account {
 	return &Account{
-		ID:          uuid.New(),
+		ID:          uuid.Must(uuid.NewV7()),
 		FullName:    fullName.String(),
 		Email:       email.String(),
 		Password:    password.String(),
 		PhoneNumber: phoneNumber.String(),
-		Role:        string(accountRole),
+		Role:        accountRole.String(),
 		CreatedAt:   time.Now().Round(time.Second),
 		UpdatedAt:   time.Now().Round(time.Second),
 	}
