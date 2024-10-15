@@ -39,7 +39,6 @@ SET
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteAccount :one
+-- name: DeleteAccount :execrows
 DELETE FROM accounts
-WHERE id = $1
-RETURNING id;
+WHERE id = $1;

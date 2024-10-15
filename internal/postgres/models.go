@@ -7,9 +7,9 @@ package postgres
 import (
 	"database/sql/driver"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type AccountRole string
@@ -61,12 +61,12 @@ type Account struct {
 	Password    string
 	FullName    string
 	PhoneNumber string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type Session struct {
 	Token  string
 	Data   []byte
-	Expiry pgtype.Timestamptz
+	Expiry time.Time
 }
