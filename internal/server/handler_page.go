@@ -19,8 +19,9 @@ func staticFiles() handlerFunc {
 // notFound is the handler for the 404 page.
 func notFound() handlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		w.WriteHeader(http.StatusNotFound)
-		return template.NotFound().Render(r.Context(), w)
+		statusCode := http.StatusNotFound
+		w.WriteHeader(statusCode)
+		return template.ErrorPage(statusCode).Render(r.Context(), w)
 	}
 }
 

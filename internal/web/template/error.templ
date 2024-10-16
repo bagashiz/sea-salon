@@ -1,9 +1,32 @@
 package template
 
-templ NotFound() {
+import "strconv"
+
+// errDesc is a map of HTTP status codes and the descriptions.
+var errDesc = map[int]string{
+	400: "Bad Request",
+	401: "Unauthorized",
+	403: "Forbidden",
+	404: "Not Found",
+	422: "Unprocessable Content",
+	500: "Internal Server Error",
+	// Add more HTTP status codes
+}
+
+// getErrorDesc returns the description of the given HTTP status code,
+// if not exists in map then return "Unknown Error".
+func getErrorDesc(statusCode int) string {
+	if desc, ok := errDesc[statusCode]; !ok {
+		return "Unknown Error"
+	} else {
+		return desc
+	}
+}
+
+templ ErrorPage(statusCode int) {
 	@Layout() {
 		<div class="grid h-screen place-content-center bg-base-100">
-			<h1 class="uppercase tracking-widest text-gray-500">404 | Not Found</h1>
+			<h1 class="uppercase tracking-widest text-gray-500">{ strconv.Itoa(statusCode) } | { getErrorDesc(statusCode) }</h1>
 		</div>
 	}
 }

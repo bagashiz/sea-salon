@@ -16,7 +16,7 @@ type handlerError struct {
 }
 
 // Error returns the error message for the handlerError type.
-func (h handlerError) Error() string {
+func (h *handlerError) Error() string {
 	return h.message
 }
 
@@ -47,7 +47,7 @@ func handle(h handlerFunc) http.Handler {
 			statusCode := http.StatusInternalServerError
 			errMsg := http.StatusText(statusCode)
 
-			if err, ok := err.(handlerError); ok {
+			if err, ok := err.(*handlerError); ok {
 				statusCode = err.statusCode
 				errMsg = err.Error()
 			}
