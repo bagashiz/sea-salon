@@ -11,7 +11,7 @@ func (a Account) ToDomain() *user.Account {
 		Password:    a.Password,
 		PhoneNumber: a.PhoneNumber,
 		Role:        string(a.Role),
-		CreatedAt:   a.CreatedAt.Time,
-		UpdatedAt:   a.UpdatedAt.Time,
+		CreatedAt:   a.CreatedAt,
+		UpdatedAt:   a.UpdatedAt,
 	}
 }

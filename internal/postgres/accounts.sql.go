@@ -7,21 +7,23 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const deleteAccount = `-- name: DeleteAccount :one
+const deleteAccount = `-- name: DeleteAccount :execrows
 DELETE FROM accounts
 WHERE id = $1
-RETURNING id
 `
 
-func (q *Queries) DeleteAccount(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, deleteAccount, id)
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) DeleteAccount(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteAccount, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const insertAccount = `-- name: InsertAccount :exec
@@ -45,8 +47,8 @@ type InsertAccountParams struct {
 	FullName    string
 	PhoneNumber string
 	Role        AccountRole
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (q *Queries) InsertAccount(ctx context.Context, arg InsertAccountParams) error {

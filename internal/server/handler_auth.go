@@ -26,11 +26,14 @@ func register(userService *user.Service) handlerFunc {
 			formValues["confirm_password"],
 		)
 		if err != nil {
-			return htmx.NewResponse().
-				StatusCode(http.StatusUnprocessableEntity).
-				Retarget("#auth").
-				PreventPushURL().
-				RenderTempl(r.Context(), w, template.RegisterForm(err))
+			if userErr, ok := err.(*user.UserError); ok {
+				return htmx.NewResponse().
+					StatusCode(http.StatusUnprocessableEntity).
+					Retarget("#auth").
+					PreventPushURL().
+					RenderTempl(r.Context(), w, template.RegisterForm(userErr))
+			}
+			return &handlerError{message: err.Error(), statusCode: http.StatusInternalServerError}
 		}
 
 		return htmx.NewResponse().
@@ -56,11 +59,14 @@ func login(sessionManager *scs.SessionManager, userService *user.Service) handle
 			formValues["password"],
 		)
 		if err != nil {
-			return htmx.NewResponse().
-				StatusCode(http.StatusUnprocessableEntity).
-				Retarget("#auth").
-				PreventPushURL().
-				RenderTempl(r.Context(), w, template.LoginForm(false, err))
+			if userErr, ok := err.(*user.UserError); ok {
+				return htmx.NewResponse().
+					StatusCode(http.StatusUnprocessableEntity).
+					Retarget("#auth").
+					PreventPushURL().
+					RenderTempl(r.Context(), w, template.LoginForm(false, userErr))
+			}
+			return &handlerError{message: err.Error(), statusCode: http.StatusInternalServerError}
 		}
 
 		sessionManager.Put(r.Context(), "account_id", current.ID.String())

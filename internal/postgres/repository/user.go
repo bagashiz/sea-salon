@@ -21,8 +21,8 @@ func (r *PostgresRepository) AddAccount(ctx context.Context, account *user.Accou
 		FullName:    account.FullName,
 		PhoneNumber: account.PhoneNumber,
 		Role:        postgres.AccountRole(account.Role),
-		CreatedAt:   pgtype.Timestamptz{Time: account.CreatedAt, Valid: !account.CreatedAt.IsZero()},
-		UpdatedAt:   pgtype.Timestamptz{Time: account.UpdatedAt, Valid: !account.UpdatedAt.IsZero()},
+		CreatedAt:   account.CreatedAt,
+		UpdatedAt:   account.UpdatedAt,
 	}
 
 	if err := r.db.InsertAccount(ctx, arg); err != nil {
@@ -126,12 +126,13 @@ func (r *PostgresRepository) UpdateAccount(ctx context.Context, account *user.Ac
 
 // DeleteAccount removes user data from postgres database.
 func (r *PostgresRepository) DeleteAccount(ctx context.Context, id uuid.UUID) error {
-	_, err := r.db.DeleteAccount(ctx, id)
+	count, err := r.db.DeleteAccount(ctx, id)
 	if err != nil {
-		if err == pgx.ErrNoRows {
-			return user.ErrAccountNotFound
-		}
 		return err
+	}
+
+	if count == 0 {
+		return user.ErrAccountNotFound
 	}
 
 	return nil
