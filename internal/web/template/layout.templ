@@ -5,12 +5,14 @@ import (
 	"time"
 )
 
+// Index displays the full page of the index page.
 templ Index() {
 	@Layout() {
 		@LandingPage()
 	}
 }
 
+// Layout defines the main layout template for the web application.
 templ Layout() {
 	<!DOCTYPE html>
 	<html lang="en">
@@ -34,6 +36,7 @@ templ Layout() {
 	</html>
 }
 
+// header defines the header section of the layout template.
 templ header() {
 	<header class="sticky top-0 z-50 bg-primary shadow-md">
 		<nav class="navbar p-0 text-primary-content">
@@ -63,6 +66,7 @@ templ header() {
 	</header>
 }
 
+// menu defines the menu section of the layout template.
 templ menu() {
 	<ul class="hidden md:flex menu menu-horizontal bg-inherit font-bold" hx-boost="true">
 		<li>
@@ -86,6 +90,7 @@ templ menu() {
 	</ul>
 }
 
+// mobileMenu defines the mobile menu section of the layout template.
 templ mobileMenu() {
 	<div class="md:hidden dropdown dropdown-end" hx-boost="true">
 		<button tabindex="0" class="btn btn-square btn-ghost" aria-label="Menu">
@@ -126,6 +131,7 @@ templ mobileMenu() {
 	</div>
 }
 
+// footer defines the footer section of the layout template.
 templ footer() {
 	<footer class="footer footer-center bg-primary text-primary-content p-4">
 		<aside>

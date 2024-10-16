@@ -1,17 +1,20 @@
 package template
 
+// RegisterPage displays the full page of register page
 templ RegisterPage() {
 	@Layout() {
 		@Register()
 	}
 }
 
+// LoginPage displays the full page of login page
 templ LoginPage() {
 	@Layout() {
 		@Login()
 	}
 }
 
+// authData contains the state and control flow for authentication operations.
 templ authData() {
 	<div
 		id="auth"
@@ -29,18 +32,21 @@ templ authData() {
 	</div>
 }
 
+// Register displays the partials of the register form and the auth data container.
 templ Register() {
 	@authData() {
 		@RegisterForm(nil)
 	}
 }
 
+// Login displays the partials of the login form and the auth data container.
 templ Login() {
 	@authData() {
 		@LoginForm(false, nil)
 	}
 }
 
+// RegisterForm displays the partials of the register form.
 templ RegisterForm(err error) {
 	if err != nil {
 		@alertError(err)
@@ -152,6 +158,7 @@ templ RegisterForm(err error) {
 	</form>
 }
 
+// LoginForm displays the partials of the login form.
 templ LoginForm(fromRegister bool, err error) {
 	if err != nil {
 		@alertError(err)

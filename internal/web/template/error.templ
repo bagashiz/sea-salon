@@ -23,6 +23,7 @@ func getErrorDesc(statusCode int) string {
 	}
 }
 
+// ErrorPage displays an error page with the given status code.
 templ ErrorPage(statusCode int) {
 	@Layout() {
 		<div class="grid h-screen place-content-center bg-base-100">

@@ -1,39 +1,26 @@
 package template
 
+import "fmt"
+
+// alertError displays an error alert with the given error message.
 templ alertError(err error) {
-	<div
-		x-data="{ isOpen: true }"
-		x-show="isOpen"
-		x-init="setTimeout(() => isOpen = false, 5000)"
-		class="toast toast-top toast-center z-50"
-	>
-		<button @click="isOpen = false" role="alert" class="alert alert-error shadow-lg">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-6 w-6 shrink-0 stroke-current"
-				fill="none"
-				viewBox="0 0 24 24"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-				></path>
-			</svg>
-			<span>{ err.Error() }</span>
-		</button>
-	</div>
+	@alert("error", err.Error())
 }
 
+// alertSuccess displays a success alert with the given message.
 templ alertSuccess(message string) {
+	@alert("success", message)
+}
+
+// alert displays an alert based on given type and message.
+templ alert(alertType string, message string) {
 	<div
 		x-data="{ isOpen: true }"
 		x-show="isOpen"
 		x-init="setTimeout(() => isOpen = false, 5000)"
 		class="toast toast-top toast-center z-50"
 	>
-		<button @click="isOpen = false" role="alert" class="alert alert-success shadow-lg">
+		<button @click="isOpen = false" role="alert" class={ "alert", fmt.Sprintf("alert-%s", alertType), "shadow-lg" }>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				class="h-6 w-6 shrink-0 stroke-current"
@@ -44,10 +31,22 @@ templ alertSuccess(message string) {
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					stroke-width="2"
-					d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+					d={ getAlertIcon(alertType) }
 				></path>
 			</svg>
 			<span>{ message }</span>
 		</button>
 	</div>
+}
+
+// getAlertIcon returns the SVG path data for the given alert type.
+func getAlertIcon(alertType string) string {
+	switch alertType {
+	case "error":
+		return "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+	case "success":
+		return "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+	default:
+		return ""
+	}
 }
