@@ -259,7 +259,10 @@ func createAccount() (*user.Account, error) {
 		return nil, err
 	}
 
-	account := user.NewAccount(fullName, phoneNumber, email, hashedPassword, role)
+	account, err := user.NewAccount(fullName, phoneNumber, email, hashedPassword, role)
+	if err != nil {
+		return nil, err
+	}
 
 	return account, nil
 }

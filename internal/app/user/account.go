@@ -25,9 +25,14 @@ func NewAccount(
 	email Email,
 	password Password,
 	accountRole AccountRole,
-) *Account {
+) (*Account, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Account{
-		ID:          uuid.Must(uuid.NewV7()),
+		ID:          id,
 		FullName:    fullName.String(),
 		Email:       email.String(),
 		Password:    password.String(),
@@ -35,5 +40,5 @@ func NewAccount(
 		Role:        accountRole.String(),
 		CreatedAt:   time.Now().Round(time.Second),
 		UpdatedAt:   time.Now().Round(time.Second),
-	}
+	}, nil
 }

@@ -42,7 +42,7 @@ func (s *Service) CreateAccount(
 		return nil, err
 	}
 
-	account := NewAccount(
+	account, err := NewAccount(
 		input.fullName,
 		input.phoneNumber,
 		input.email,
