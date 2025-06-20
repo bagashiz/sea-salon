@@ -1,4 +1,0 @@
-[tools]
-golang = "1.23"
-golangci-lint = "latest"
-task = "latest"
