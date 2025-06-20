@@ -6,6 +6,11 @@ out
 dist
 *.tgz
 
+# tanstack
+.nitro
+.output
+.tanstack
+
 # code coverage
 coverage
 *.lcov
