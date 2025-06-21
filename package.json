@@ -2,8 +2,9 @@
   "name": "sea-salon",
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build"
+    "dev": "bunx --bun vite dev",
+    "build": "bunx --bun vite build",
+    "start": "bun .output/server/index.mjs"
   },
   "private": true,
   "devDependencies": {
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "@tanstack/react-router": "^1.121.27",
+    "@tanstack/react-router-devtools": "^1.121.27",
     "@tanstack/react-start": "^1.121.29",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
