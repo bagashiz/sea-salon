@@ -30,9 +30,9 @@
     "noUnusedParameters": true,
 
     // Path aliases
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["*"]
+      "~/*": ["./src/*"]
     }
   }
 }
