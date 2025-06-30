@@ -32,6 +32,7 @@ export const Route = createRootRoute({
         ? {
             crossOrigin: "anonymous",
             src: "//unpkg.com/react-scan/dist/auto.global.js",
+            defer: true,
           }
         : undefined,
     ],
